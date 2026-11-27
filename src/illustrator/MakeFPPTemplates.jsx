@@ -4,7 +4,8 @@
 
   1. Open ONE section file (patch numbers and colour notes typed as normal text). In the dialog,
      say which half of the block the artwork shows as seen on the quilt FRONT.
-  2. Select all (Ctrl+A), then File > Scripts > Other Script... and pick this file.
+  2. Select all (Ctrl+A), then File > Scripts > Make FPP Templates (added by Update FPP Helpers),
+     or File > Scripts > Other Script... and pick this file.
 
   Makes a NEW document (your file is not changed) with, for each side:
     - the half the artwork shows: printed as a MIRROR image (FPP is sewn from the printed side,
@@ -274,8 +275,8 @@
         return e;
     }
     var eName = row("Section name (shown on every sheet):", defName, 220);
-    var eW = row("Working area width on the page (in):", "7");
-    var eH = row("Working area height on the page (in):", "8.5");
+    var eW = row("Working area width on the page (in):", "7.25");
+    var eH = row("Working area height on the page (in):", "8.75");
     var eO = row("Glue strip past each join (in):", "0.5");
     var pS = w.add("panel", undefined, "Seen on the FRONT of the finished quilt, this artwork is the...");
     pS.alignChildren = "left";
@@ -406,10 +407,20 @@
         var d = 0.16 * PT, c = parent.pathItems.ellipse(y + d / 2, x - d / 2, d, d);
         c.filled = true; c.fillColor = white; c.stroked = true; c.strokeColor = black; c.strokeWidth = 0.75;
     }
+    // All text this helper adds uses Gadugi Regular (falls back to Illustrator's default if missing).
+    var labelFont = null;
+    try { labelFont = app.textFonts.getByName("Gadugi"); } catch (eF) {}
+    if (!labelFont) {
+        for (var fi = 0; fi < app.textFonts.length; fi++) {
+            var tfnt = app.textFonts[fi];
+            if (tfnt.family === "Gadugi" && tfnt.style === "Regular") { labelFont = tfnt; break; }
+        }
+    }
     function text(parent, cx, cy, str, size, rotateDeg, color) {
         var tf = parent.textFrames.pointText([cx, cy]);
         tf.contents = str;
         var ca = tf.textRange.characterAttributes;
+        if (labelFont) ca.textFont = labelFont;
         ca.size = size; ca.fillColor = color || black;
         tf.textRange.paragraphAttributes.justification = Justification.CENTER;
         if (rotateDeg) tf.rotate(rotateDeg);
@@ -585,6 +596,7 @@
         (noInch.length ? "\n\nNo empty spot for the 1-inch graphic on: " + noInch.join(", ") +
             ". Place it by hand on those sheets." : "") +
         (angle ? "\nSection turned " + angle + " degrees to save paper." : "") +
+        (labelFont ? "" : "\n\nThe Gadugi font isn't installed, so sheet text uses Illustrator's default font.") +
         "\n\nYour original file was not changed.";
     if (cExport.value) {
         var folder = Folder.selectDialog("Choose where to save the sheets (a subfolder is made for each side)");

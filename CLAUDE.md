@@ -26,7 +26,8 @@ sheets that the quilter prints at true size, trims, tapes together and then cuts
 - When mirroring, every TextFrame is flipped back in place so labels read normally.
 - Patch labels look like `A-1 (Color 2)`. Optional "add R" turns `A-1` into `A-1R` on Right sheets.
 - Sheet labels say "Sheet 3 of 7" – deliberately NOT "A1/B2" style, which would clash with patch labels.
-- Working area defaults to 7 x 8.5 in (fits her Word template between header and footer); glue
+- All text the Illustrator helper adds (sheet labels, join notes, map) uses Gadugi Regular.
+- Working area defaults to 7.25 x 8.75 in (fits her Word template between header and footer); glue
   strip 0.5 in. The sheet carrying the glue strip gets a dashed line + circles + "Sheet N goes
   here"; the neighbour gets a solid trim line + the same circles + "Trim on this line, lay over Sheet M".
 - The 1-inch graphic (`1 Inch.ai`) goes on every sheet in an empty spot, never on the assembly map
@@ -96,6 +97,11 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
    release; the designer's **Update FPP Helpers** desktop icon (`src/updater/Update-FPPHelpers.ps1`,
    Windows PowerShell 5.1, ASCII only) installs the latest release. Keep the zip's file names stable:
    the updater looks for `FPP-Template-Helpers.zip` and `FPP Template Helpers.dotm`.
+5. Illustrator menu entry: the updater writes a small launcher, `Make FPP Templates.jsx`, into every
+   `Program Files\Adobe\Adobe Illustrator*\Presets\<locale>\Scripts` folder. It asks first, then needs one admin prompt.
+   The launcher only does `$.evalFile` on `Documents\FPP-Template-Helpers\MakeFPPTemplates.jsx`, so updates
+   need no admin rights. It is rewritten only when missing or different. Under `$.evalFile`, `$.fileName` is
+   the helper's own path (checked), so the 1-inch "next to the helper" lookup still works.
 
 ## Not in this repo
 
