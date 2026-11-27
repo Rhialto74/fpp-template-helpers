@@ -96,7 +96,7 @@ function Select-OutputFolder([string]$helperFolder) {
 
 function New-OutputFolderIcon([string]$helperFolder) {
     New-DesktopIcon $OutputIcon (Join-Path $helperFolder 'Update FPP Helpers.ps1') '-ChooseOutputFolder' `
-        'Choose where the FPP helpers save template sheets' 3
+        'Choose where the FPP helpers save template sheets' 314   # gear (settings), not a folder
 }
 
 # Asks for the output folder once (again only if the saved folder is gone) and makes the
@@ -104,7 +104,10 @@ function New-OutputFolderIcon([string]$helperFolder) {
 function Initialize-OutputFolder([string]$helperFolder, [bool]$firstInstall) {
     $cur = Get-OutputFolder
     if ($cur -and (Test-Path -LiteralPath $cur)) {
-        if ($firstInstall) { New-OutputFolderIcon $helperFolder }
+        # Make it on first install; otherwise only refresh one that's there (keeps icon changes current,
+        # never brings back an icon she deleted).
+        $lnk = Join-Path ([Environment]::GetFolderPath('Desktop')) "$OutputIcon.lnk"
+        if ($firstInstall -or (Test-Path -LiteralPath $lnk)) { New-OutputFolderIcon $helperFolder }
         return ''
     }
     $cur = Select-OutputFolder $helperFolder
