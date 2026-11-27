@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pattern Sheet Helpers – How To</title>
+<style>
+/* VOICE: friendly, plain-spoken how-to for a quilter; calm, no jargon.
+   IDEA: a printed pattern instruction booklet – numbered steps, "you'll see" notes.
+   PICTURE: a four-stop flow drawn like quilt templates being pieced: file → sheets → Word → printed & taped.
+   COLOUR/TYPE: her pattern teal #256358 with warm paper white and a soft coral for warnings; Segoe UI/Gadugi.
+   LAYOUT: title + flow picture, then a section strip, then numbered steps per part; prints cleanly. */
+:root{color-scheme:light dark;
+  --bg:light-dark(#fbfaf7,#10201d);--card:light-dark(#ffffff,#16302b);--ink:light-dark(#1d2b28,#e6efec);
+  --soft:light-dark(#5a6b67,#a9bdb8);--teal:light-dark(#256358,#7fc7b8);--tint:light-dark(#e6f1ee,#1d3d36);
+  --warn:light-dark(#fff1e8,#3a2419);--warnline:light-dark(#d9773f,#e89a6c);--line:light-dark(#d9e3e0,#2c4a44)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Segoe UI",Gadugi,system-ui,sans-serif;overflow-x:clip}
+html{scroll-padding-top:20px}
+.wrap{max-width:860px;margin:0 auto;padding:0 max(5vw,16px)}
+header{background:var(--teal);color:light-dark(#fff,#0c1f1b);padding:clamp(28px,5vw,56px) 0 clamp(20px,3vw,32px)}
+header h1{font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 10px;text-wrap:balance;font-weight:700}
+header p{margin:0;max-width:62ch;font-size:18px;opacity:.95}
+.flow{background:var(--card);border-radius:14px;margin-top:24px;padding:10px}
+.flow svg{width:100%;height:auto;display:block}
+nav.scroll{display:flex;gap:8px;overflow-x:auto;padding:14px 0;margin-bottom:6px}
+nav a{flex:none;text-decoration:none;color:var(--teal);border:1.5px solid var(--teal);border-radius:999px;padding:8px 14px;font-size:15px;font-weight:600}
+nav a:hover,nav a:focus-visible{background:var(--teal);color:var(--card);outline:none}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,3vw,32px);margin:18px 0}
+h2{font-size:28px;line-height:1.15;color:var(--teal);margin:0 0 6px}
+h3{font-size:20px;margin:26px 0 8px}
+.lead{color:var(--soft);margin:0 0 14px}
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 16px 52px}
+ol.steps>li::before{content:counter(s);position:absolute;left:0;top:-2px;width:36px;height:36px;border-radius:50%;background:var(--teal);color:var(--card);display:grid;place-items:center;font-weight:700}
+.menu{font-weight:600;white-space:nowrap;background:var(--tint);border-radius:6px;padding:1px 7px}
+kbd{font:600 15px "Segoe UI",system-ui;border:1.5px solid var(--line);border-bottom-width:3px;border-radius:6px;padding:0 6px;background:var(--card);white-space:nowrap}
+.file{font-weight:600;color:var(--teal);overflow-wrap:anywhere}
+.note,.warn{border-radius:10px;padding:12px 16px;margin:12px 0}
+.note{background:var(--tint)}
+.warn{background:var(--warn);border-left:5px solid var(--warnline)}
+.see{display:block;color:var(--soft);font-size:15.5px;margin-top:4px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:16px}
+th,td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--soft);font-weight:600;font-size:14px}
+#files td:first-child,#files th:first-child{width:34%}
+td .file{overflow-wrap:normal;word-break:normal}
+footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
+@media(max-width:600px){body{font-size:16px}ol.steps>li{padding-left:44px}table{font-size:14px}
+ .stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0 3px 8em}.stack td::before{content:attr(data-l);float:left;width:7.5em;margin-left:-8em;font-weight:600;color:var(--soft)}}
+@media print{body{background:#fff;color:#000;font-size:12pt}header{background:#fff;color:#256358;padding:0}nav{display:none}
+ section{border:0;padding:0;margin:0 0 14pt;break-inside:auto}h2,h3{break-after:avoid}ol.steps>li{break-inside:avoid}.flow{display:none}}
+@media(prefers-reduced-motion:no-preference){nav a{transition:background .15s}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Turning a pattern section into printable template pages</h1>
+  <p>Two small add-ons do the fiddly work: one in Illustrator splits a big template onto letter-size sheets (Left and Right versions), and one in Word drops those sheets into the pattern, page by page, at exactly the right size.</p>
+  <div class="flow" role="img" aria-label="Illustrator file, to sheets, to Word pages, to printed and taped template">
+    <svg viewBox="0 0 800 170">
+      <defs><pattern id="dots" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#256358" opacity=".35"/></pattern></defs>
+      <g font-family="Segoe UI,system-ui" font-size="14" fill="currentColor" style="color:var(--ink)" text-anchor="middle">
+        <!-- 1 file -->
+        <rect x="25" y="22" width="130" height="100" rx="8" fill="var(--tint)" stroke="#256358" stroke-width="2"/>
+        <path d="M45 110 L135 110 L45 38 Z" fill="url(#dots)" stroke="#256358" stroke-width="2"/>
+        <text x="90" y="148">Section in Illustrator</text>
+        <!-- arrow -->
+        <path d="M168 72 h40 m-10 -8 l10 8 l-10 8" stroke="#256358" stroke-width="3" fill="none"/>
+        <!-- 2 sheets -->
+        <g stroke="#256358" stroke-width="2">
+          <rect x="222" y="20" width="62" height="78" rx="4" fill="var(--card)"/>
+          <rect x="292" y="20" width="62" height="78" rx="4" fill="var(--card)"/>
+          <rect x="257" y="50" width="62" height="78" rx="4" fill="var(--card)"/>
+        </g>
+        <path d="M232 90 L276 90 L232 32 Z M268 120 L312 120 L312 60 Z" fill="url(#dots)" stroke="#256358" stroke-width="1.5"/>
+        <path d="M284 30 v66" stroke="#256358" stroke-dasharray="4 3"/>
+        <circle cx="284" cy="45" r="4" fill="var(--card)" stroke="#256358"/><circle cx="284" cy="80" r="4" fill="var(--card)" stroke="#256358"/>
+        <text x="288" y="148">Left &amp; Right sheets</text>
+        <path d="M372 72 h40 m-10 -8 l10 8 l-10 8" stroke="#256358" stroke-width="3" fill="none"/>
+        <!-- 3 word page -->
+        <rect x="430" y="12" width="96" height="124" rx="4" fill="var(--card)" stroke="#256358" stroke-width="2"/>
+        <rect x="440" y="22" width="56" height="6" rx="3" fill="#256358"/>
+        <rect x="440" y="32" width="40" height="4" rx="2" fill="#256358" opacity=".5"/>
+        <rect x="442" y="44" width="72" height="80" fill="var(--tint)" stroke="#256358"/>
+        <path d="M450 116 L506 116 L450 54 Z" fill="url(#dots)" stroke="#256358" stroke-width="1.5"/>
+        <rect x="490" y="52" width="16" height="16" fill="none" stroke="#256358"/>
+        <text x="478" y="158">Pages in the pattern</text>
+        <path d="M544 72 h40 m-10 -8 l10 8 l-10 8" stroke="#256358" stroke-width="3" fill="none"/>
+        <!-- 4 taped -->
+        <g transform="rotate(-4 690 70)">
+          <path d="M610 118 L770 118 L610 22 Z" fill="url(#dots)" stroke="#256358" stroke-width="2.5"/>
+          <path d="M680 20 v100" stroke="#256358" stroke-width="1.5"/>
+          <rect x="670" y="62" width="22" height="14" fill="#e8c96a" opacity=".8"/>
+        </g>
+        <text x="690" y="152">Printed at true size</text>
+      </g>
+    </svg>
+  </div>
+</div></header>
+
+<div class="wrap">
+<nav class="scroll" aria-label="Sections">
+  <a href="#unzip">Step 0 · Unzip</a><a href="#files">What you need</a><a href="#illustrator">Part 1 · Illustrator</a><a href="#word-setup">Part 2 · Word set-up (once)</a><a href="#word">Part 3 · Word pages</a><a href="#print">Part 4 · Print</a><a href="#help">If something goes wrong</a>
+</nav>
+
+<section id="unzip">
+  <h2>Step 0 · Unzip the files to your computer</h2>
+  <p class="lead">Do this once. Illustrator and Word can't use the files while they're still inside the zip.</p>
+  <ol class="steps">
+    <li>Find <span class="file">FPP-Template-Helpers.zip</span> (for example in your Downloads folder), right-click it and choose <b>Extract All…</b></li>
+    <li>In the window that opens, click <b>Browse…</b>, click <b>Documents</b> on the left, then <b>Select Folder</b>.</li>
+    <li>In the box showing the destination, add <b>\FPP-Template-Helpers</b> to the end, so it reads something like <span class="file">C:\Users\<i>yourname</i>\Documents\FPP-Template-Helpers</span>. Click <b>Extract</b>.</li>
+    <li>A folder window opens showing four files: this guide, <span class="file">MakeFPPTemplates.jsx</span>, <span class="file">AddTemplateSheets.bas</span> and <span class="file">1 Inch.ai</span>. From now on, this guide calls that folder <span class="menu">Documents › FPP-Template-Helpers</span>.
+      <span class="see">Tip: drag that folder onto "Quick access" in the left column of File Explorer so it's always one click away.</span></li>
+    <li>Put your section files (the Group A–D files) in this same folder, next to <span class="file">1 Inch.ai</span>. Keeping everything in one folder on the computer lets the Illustrator helper fill in the section name and find the 1-inch graphic by itself.
+      <span class="see">If a section file lives in Adobe's cloud, save a computer copy first: open it in Illustrator, choose <span class="menu">File › Save a Copy…</span>, click <b>Save on your computer</b> if Illustrator offers it, go to <span class="menu">Documents › FPP-Template-Helpers</span>, keep the type as <b>Adobe Illustrator (*.AI)</b>, Save, and click OK in the options window. Then open that copy for Part 1.</span></li>
+  </ol>
+</section>
+
+<section id="files">
+  <h2>What you need</h2>
+  <p class="lead">After Step 0, these are all in <span class="menu">Documents › FPP-Template-Helpers</span>. You don't need to open or understand the add-on files – you just point Illustrator and Word at them.</p>
+  <table class="stack">
+    <thead><tr><th>File</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td data-l="File"><span class="file">MakeFPPTemplates.jsx</span></td><td data-l="What it is">The <b>Illustrator helper</b>. Splits one section into numbered sheets, makes the Left and Right versions, adds the join marks, the sheet numbers and your 1-inch square, and saves them as pictures.</td></tr>
+      <tr><td data-l="File"><span class="file">AddTemplateSheets.bas</span></td><td data-l="What it is">The <b>Word helper</b>. Adds those pictures to the end of your pattern document, one per page, with a title and the exact print size.</td></tr>
+      <tr><td data-l="File"><span class="file">1 Inch.ai</span></td><td data-l="What it is">Your 1-inch scale square. Leave it in the folder with the helpers; the Illustrator helper finds it by itself.</td></tr>
+      <tr><td data-l="File">Section files</td><td data-l="What it is">e.g. <span class="file">Group A-Right Image-LABELED.ai</span> – one piecing section per file, with the patch labels typed in. Keep copies in <span class="menu">Documents › FPP-Template-Helpers</span> (not only in Adobe's cloud).</td></tr>
+      <tr><td data-l="File"><span class="file">BRS Pattern Template.docx</span></td><td data-l="What it is">Your Word pattern template (not in the zip – use your own copy).</td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>Left and Right, in one sentence:</b> foundation paper piecing is sewn from the printed side, so the printed template is a mirror image of the finished front. The Group files show the <b>Right</b> half as it looks on the front, so the helper prints the Right templates mirrored and the Left templates as drawn – and turns your labels back around so they always read normally.</div>
+</section>
+
+<section id="illustrator">
+  <h2>Part 1 · Make the sheets in Illustrator</h2>
+  <p class="lead">Do this once for each section file (Group A, B, C, D). About a minute each.</p>
+
+  <h3>Before the first file (once)</h3>
+  <ol class="steps">
+    <li>Make an empty folder for the results: in <span class="menu">Documents › FPP-Template-Helpers</span>, right-click an empty area › <b>New › Folder</b>, and name it <span class="file">Pattern-Sheets</span>. If it already has folders from an earlier try, delete them so old pages don't end up in Word.</li>
+  </ol>
+
+  <h3>For each section file</h3>
+  <ol class="steps">
+    <li>Open the section file from <span class="menu">Documents › FPP-Template-Helpers</span> (e.g. <span class="file">Group A-Right Image-LABELED.ai</span>) – the copy on your computer, not the cloud version.</li>
+    <li>Look around the artboard for anything that doesn't belong to this section – a stray line off to the side, a leftover shape. Click it and press <kbd>Delete</kbd>. Anything selected in the next step becomes part of the template.
+      <span class="see">Optional tidy-up: <span class="menu">Object › Path › Clean Up…</span>, tick all three boxes, OK. This removes invisible leftovers.</span></li>
+    <li>Press <kbd>Ctrl</kbd> + <kbd>A</kbd> to select everything. The lines turn highlighted with a box around them.</li>
+    <li>Go to <span class="menu">File › Scripts › Other Script…</span>, go to <span class="menu">Documents › FPP-Template-Helpers</span> and open <span class="file">MakeFPPTemplates.jsx</span>.
+      <span class="see">A window titled "Make FPP template sheets" appears.</span></li>
+    <li>Check the window:
+      <ul>
+        <li><b>Section name</b> – filled in from the file name (e.g. "Group A"). This is what prints on the pages. Change it if you like. If it's blank or odd, the file was opened from the cloud – type the name yourself, or use the computer copy.</li>
+        <li><b>Working area</b> 7 × 8.5 and <b>glue strip</b> 0.5 – leave as they are.</li>
+        <li><b>"This artwork is the…"</b> – leave <b>RIGHT half</b> selected for the Group files.</li>
+        <li><b>Make LEFT / Make RIGHT</b> – leave both ticked.</li>
+        <li><b>Patch labels on the Right templates</b> – "Same as Left" or "Add an R" (A-1 becomes A-1R). Your choice; use the same for every section.</li>
+        <li><b>1-inch scale graphic</b> – should already show the path to <span class="file">1 Inch.ai</span>. If it's empty, click <b>Browse…</b>, go to <span class="menu">Documents › FPP-Template-Helpers</span> and pick it once; it's remembered after that.</li>
+      </ul>
+      Click <b>OK</b>.</li>
+    <li>If it asks whether to <b>turn the section to save paper</b>, either answer is fine. "Yes" uses fewer sheets with the shape slightly tilted on the paper.</li>
+    <li>When it asks where to save, go to <span class="menu">Documents › FPP-Template-Helpers</span> and pick the <span class="file">Pattern-Sheets</span> folder – the <b>same folder every time</b>. It makes two folders inside, e.g. "Group A - Left" and "Group A - Right".</li>
+    <li>A message says how many sheets each side has. If it lists sheets with <b>no room for the 1-inch graphic</b>, that's normal for a sheet completely covered by the template; the square on the other sheets still checks the scale.</li>
+    <li>A new, untitled document is open with all the sheets. You can close it <b>without saving</b> – the pictures are already saved. Your original file is never changed.</li>
+  </ol>
+  <div class="warn"><b>Red error box?</b> Take a screenshot of it (it names a "Line" number) and send it to whoever looks after these helpers. Close the untitled document without saving and try again once it's fixed.</div>
+</section>
+
+<section id="word-setup">
+  <h2>Part 2 · Set up Word (only once per computer)</h2>
+  <p class="lead">Word keeps add-ons like this behind a hidden tab called <b>Developer</b>. You turn it on once, add the Word helper once, and it's there for good.</p>
+
+  <h3>Turn on the Developer tab</h3>
+  <ol class="steps">
+    <li>In Word, click <span class="menu">File</span> (top left), then <span class="menu">Options</span> at the bottom of the left column.</li>
+    <li>Click <span class="menu">Customize Ribbon</span> on the left.</li>
+    <li>In the right-hand list, tick <b>Developer</b>, then click <b>OK</b>.
+      <span class="see">A new "Developer" tab now sits along the top of Word.</span></li>
+  </ol>
+
+  <h3>Add the Word helper</h3>
+  <ol class="steps">
+    <li>Click the <span class="menu">Developer</span> tab, then <span class="menu">Visual Basic</span> at its left end.
+      <span class="see">A plain, old-fashioned looking window opens. Don't worry – you only click two things here.</span></li>
+    <li>In the panel on the left, click the line that says <b>Normal</b>. This stores the helper in Word itself, so it works in every document.</li>
+    <li>Use that window's menu: <span class="menu">File › Import File…</span>, go to <span class="menu">Documents › FPP-Template-Helpers</span>, pick <span class="file">AddTemplateSheets.bas</span>, and click <b>Open</b>.
+      <span class="see">Under Normal you'll now see a "Modules" folder containing "FPPSheets". That's it.</span></li>
+    <li>Close that window with the <b>X</b> in its top-right corner. You're back in Word.</li>
+  </ol>
+  <div class="note"><b>If Word later says macros are disabled:</b> <span class="menu">File › Options › Trust Center › Trust Center Settings… › Macro Settings</span>, choose <b>"Disable VBA macros with notification"</b> (or similar wording), OK. When a yellow bar asks, click <b>Enable Content</b>.</div>
+  <div class="note"><b>Getting a newer version of the helper?</b> Open <span class="menu">Developer › Visual Basic</span>, right-click <b>FPPSheets</b> on the left, choose <b>Remove FPPSheets</b> (answer <b>No</b> to exporting), then import the new file as above.</div>
+</section>
+
+<section id="word">
+  <h2>Part 3 · Put the sheets into the pattern</h2>
+  <ol class="steps">
+    <li>Open <span class="file">BRS Pattern Template.docx</span> and <b>straight away</b> use <span class="menu">File › Save As</span> to save it under the pattern's name (e.g. "Deco Pattern.docx"). This keeps the template clean.</li>
+    <li>Click the <span class="menu">View</span> tab, then <span class="menu">Macros</span> (far right) › <span class="menu">View Macros</span>.
+      <span class="see">You can also use <span class="menu">Developer › Macros</span>.</span></li>
+    <li>Click <b>AddTemplateSheets</b> in the list, then <b>Run</b>.</li>
+    <li>Go to <span class="menu">Documents › FPP-Template-Helpers</span>, click the <span class="file">Pattern-Sheets</span> folder itself (not one of the folders inside it) and click OK.
+      <span class="see">You can also pick just one folder, such as "Group A - Left", to add only that.</span></li>
+    <li>It asks "Add <i>N</i> page(s) to the end of …?" – click <b>OK</b>. It takes a moment.
+      <span class="see">Each sheet gets its own page with a teal title such as "Group A - Left Template (Sheet 2 of 5)", a short print note, and the sheet at its exact size. Every section starts with its assembly map.</span></li>
+    <li>Scroll through and check a few pages, then save.</li>
+  </ol>
+  <div class="note"><b>Page order:</b> sections are added in folder-name order (Group A, B, C, D), Left before Right. To change it, rename the folders inside Pattern-Sheets with a number in front (e.g. "1 Group C - Left"). Titles on the pages don't change.</div>
+  <div class="warn"><b>Ran it twice by accident?</b> Close the document without saving and start again from your last saved copy.</div>
+</section>
+
+<section id="print">
+  <h2>Part 4 · Print at true size</h2>
+  <ol class="steps">
+    <li><span class="menu">File › Print</span>. Paper size: <b>Letter</b>.</li>
+    <li>The last setting (usually "1 Page Per Sheet") › <span class="menu">Scale to Paper Size</span> › <b>No Scaling</b>.</li>
+    <li>Click <span class="menu">Printer Properties</span> and turn off anything like "Fit to page", "Shrink" or "Scale" (or set it to 100%).</li>
+    <li>Print one sheet first and measure the <b>1-inch square</b> with a ruler. If it's exactly 1 inch, print the rest.</li>
+  </ol>
+</section>
+
+<section id="help">
+  <h2>If something goes wrong</h2>
+  <table class="stack">
+    <thead><tr><th>What you see</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td data-l="You see">The assembly map shape has an odd spike, or there are more sheets than expected</td><td data-l="Do this">Something stray was selected. Close the untitled document, delete the stray item in the section file (or run Clean Up), select all again and rerun.</td></tr>
+      <tr><td data-l="You see">Section name is blank or strange, or the 1-inch path is empty</td><td data-l="Do this">The file was opened from Adobe's cloud. Type the name in yourself and use Browse for <span class="file">1 Inch.ai</span> – or better, save a computer copy as in Step 0 and use that.</td></tr>
+      <tr><td data-l="You see">Labels read backwards on one side</td><td data-l="Do this">Those labels were turned into outlines. Retype them with the Type tool as normal text and rerun.</td></tr>
+      <tr><td data-l="You see">"AddTemplateSheets" isn't in the Macros list</td><td data-l="Do this">The Word helper wasn't added, or was added to a document instead of <b>Normal</b>. Repeat Part 2.</td></tr>
+      <tr><td data-l="You see">"No sheets were found there"</td><td data-l="Do this">You picked the wrong folder. Pick <span class="file">Pattern-Sheets</span>, or one of the "… - Left/Right" folders inside it.</td></tr>
+      <tr><td data-l="You see">A warning that pictures were stretched</td><td data-l="Do this">A sheet picture was edited or swapped. Rerun the Illustrator helper for that section and add the pages again.</td></tr>
+      <tr><td data-l="You see">Printed 1-inch square isn't 1 inch</td><td data-l="Do this">Something is scaling the print. Check Part 4, especially Printer Properties.</td></tr>
+      <tr><td data-l="You see">A red error box in Illustrator or Word</td><td data-l="Do this">Screenshot it and send it on. Nothing in your original files is changed.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>Guide for MakeFPPTemplates.jsx (Illustrator) and AddTemplateSheets.bas (Word). Keep this page in Documents › FPP-Template-Helpers with them.</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Word's VBA editor imports .bas files reliably only with Windows line endings
+*.bas  text eol=crlf
+*.ps1  text eol=crlf
+*.jsx  text eol=lf
+*.js   text eol=lf
+*.html text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.ai   binary
+*.png  binary
+*.zip  binary
