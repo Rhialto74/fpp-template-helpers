@@ -11,7 +11,9 @@ sheets that the quilter prints at true size, trims, tapes together and then cuts
 
 - `src/illustrator/MakeFPPTemplates.jsx` – the Illustrator helper (ExtendScript).
 - `src/word/AddTemplateSheets.bas` – the Word helper (VBA module named `FPPSheets`).
-- `docs/FPP-Template-Helpers-Guide.html` – the end-user guide. Keep it in plain language: no
+- `docs/FPP-Template-Helpers-Guide.html` – the end-user guide, published by GitHub Pages (main, `/docs`)
+  at https://rhialto74.github.io/fpp-template-helpers/FPP-Template-Helpers-Guide.html
+  (`docs/index.html` redirects there). Pushing to main updates it. Keep it in plain language: no
   "script", "macro", "JavaScript" or "VBA" jargon beyond file names. It covers the software only;
   the designer is the expert on sewing/assembly, so don't add quilting instructions.
 - Legacy versions in `legacy/` folders are kept for reference only.

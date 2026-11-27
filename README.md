@@ -12,8 +12,9 @@ into printable, true-scale template pages inside a Word pattern document.
    Appends those sheets to the open pattern document, one per page: a title in the pattern's
    heading style, a print note, and the picture placed on the page at its exact size.
 
-End-user instructions (for someone who has never used a script) are in
-[`docs/FPP-Template-Helpers-Guide.html`](docs/FPP-Template-Helpers-Guide.html).
+End-user instructions (for someone who has never used a script):
+**[read the guide](https://rhialto74.github.io/fpp-template-helpers/FPP-Template-Helpers-Guide.html)**
+(published by GitHub Pages from [`docs/`](docs/FPP-Template-Helpers-Guide.html) on `main`).
 
 ## Layout
 
@@ -40,7 +41,7 @@ scripts/release.ps1                       tests, builds, tags and publishes a Gi
 ## Release
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scriptselease.ps1 -Version 1.2.0 -Notes "What changed" -TemporarilyTrustVba
+powershell -ExecutionPolicy Bypass -File scripts\release.ps1 -Version 1.2.0 -Notes "What changed" -TemporarilyTrustVba
 ```
 
 Run on a Windows PC with Word, from a clean, pushed `main`. It runs the tests, builds
