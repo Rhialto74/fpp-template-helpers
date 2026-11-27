@@ -25,6 +25,13 @@ function checker(file) {
   return ps(['-File', path.join(root, 'scripts', 'check-word-addin.ps1'), '-Path', file]);
 }
 
+test('the build unloads installed add-ins before saving (the cause of the broken builds)', () => {
+  const src = fs.readFileSync(path.join(root, 'scripts', 'build-word-addin.ps1'), 'utf8');
+  const unload = src.search(/\.Installed\s*=\s*\$false/);
+  assert.ok(unload > 0, 'build-word-addin.ps1 no longer unloads add-ins in its hidden Word');
+  assert.ok(unload < src.indexOf('SaveAs2'), 'add-ins must be unloaded before the add-in is saved');
+});
+
 test('the build and the release both run check-word-addin', () => {
   for (const f of ['build-word-addin.ps1', 'release.ps1']) {
     const src = fs.readFileSync(path.join(root, 'scripts', f), 'utf8');

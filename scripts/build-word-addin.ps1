@@ -34,10 +34,11 @@ if ($old -ne 1) {
     $changed = $true
 }
 
-# Word sometimes saves the .dotm with the code (word/vbaProject.bin) but without the part that links it
+# Word can save the .dotm with the code (word/vbaProject.bin) but without the part that links it
 # to the template (word/_rels/vbaProject.bin.rels) and the macro list (word/vbaData.xml). Word then
-# ignores the code: no AddTemplateSheets in View > Macros. That shipped in v1.1.0 and v1.4.1.
-# So check the saved file (scripts\check-word-addin.ps1) and build again if needed.
+# ignores the code: no AddTemplateSheets in View > Macros. That shipped in v1.1.0 and v1.4.1; it happens
+# whenever a working copy of the add-in is loaded (see below). As a backstop, check the saved file
+# (scripts\check-word-addin.ps1) and build again if needed.
 $checker = Join-Path $PSScriptRoot 'check-word-addin.ps1'
 $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
 
@@ -46,6 +47,10 @@ try {
     $word = New-Object -ComObject Word.Application
     $word.Visible = $false
     $word.DisplayAlerts = 0
+    # The real cause of the broken builds: when the installed add-in (Word's Startup folder) is loaded, it
+    # already provides FPPSheets.AddTemplateSheets, and Word then saves the new template WITHOUT its macro
+    # list and link part. Unload add-ins in this hidden Word only; they load as normal next time Word starts.
+    foreach ($a in @($word.AddIns)) { if ($a.Installed) { $a.Installed = $false } }
     $dir = Split-Path -Parent $OutFile
     if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
     $ok = $false

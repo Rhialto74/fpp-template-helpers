@@ -83,10 +83,11 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
 
 ## Word helper notes
 
-- Word sometimes saves the built add-in WITHOUT `word/_rels/vbaProject.bin.rels` and `word/vbaData.xml`
-  (shipped broken in v1.1.0 and v1.4.1; not an admin-rights issue). Word then ignores its macros and only an
-  old Normal.dotm copy, if any, shows in View › Macros. `scripts/check-word-addin.ps1` catches it: the build
-  retries up to 3 times, release.ps1 checks the final zip before publishing, and the updater won't remove the
+- If a working copy of the add-in is loaded (it's in Word's Startup folder) while building, Word saves the
+  new add-in WITHOUT `word/_rels/vbaProject.bin.rels` and `word/vbaData.xml`, because the same macro name is
+  already loaded. Word then ignores its macros (shipped broken in v1.1.0 and v1.4.1). `build-word-addin.ps1`
+  therefore unloads add-ins in its hidden Word first (that session only). `scripts/check-word-addin.ps1`
+  is the backstop: the build retries up to 3 times, release.ps1 checks the final zip before publishing, and the updater won't remove the
   old Normal copy while the installed add-in fails the same check. `tests/word-addin.test.js` runs these
   checks on real good/broken add-ins in `tests/fixtures/`.
 - A Word started by a script doesn't load Normal's macros (`NormalTemplate.VBProject` looks empty), so the
