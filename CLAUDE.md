@@ -25,6 +25,9 @@ sheets that the quilter prints at true size, trims, tapes together and then cuts
   (e.g. `Group A-Right Image-LABELED.ai`) show the **RIGHT half as seen on the quilt front**.
   Therefore: **Right templates = mirrored artwork; Left templates = artwork as drawn.**
   The dialog asks which half the artwork shows (default RIGHT) and the code derives the rest.
+- Not every template is a Left/Right pair (e.g. a single HST shape). The dialog's third choice, "ONE
+  template", builds one side named "Template", printed exactly as drawn (no mirroring, no "add R").
+  Titles `<Section> - Template (Sheet n of N)`, folder `<Section> - Template`; Word needs nothing new.
 - When mirroring, every TextFrame is flipped back in place so labels read normally.
 - Patch labels look like `A-1 (Color 2)`. Optional "add R" turns `A-1` into `A-1R` on Right sheets.
 - Sheet labels say "Sheet 3 of 7" – deliberately NOT "A1/B2" style, which would clash with patch labels.
@@ -95,7 +98,9 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
 2. Real check: run the Illustrator helper on a section file (Ctrl+A first), inspect the PNGs and maps
    (Left = as drawn, Right = mirrored, labels readable, straight map outline, 1-inch box present).
 3. Run the Word helper on a COPY of the pattern document; check pictures sit between header and footer.
-4. Ship with `scripts/release.ps1 -Version x.y.z -TemporarilyTrustVba` (needs Word). It publishes a GitHub
+4. Ship with `release.cmd` in the repo root (Word closed): it proposes last release + 0.1.0 and notes from
+   commit subjects, asks, pushes main, tests, builds (VBA trust on only for the build) and publishes.
+   `scripts/release.ps1 -DryRun` previews without publishing; `-Version`, `-Notes`, `-Yes` override. It publishes a GitHub
    release; the designer's **Update FPP Helpers** desktop icon (`src/updater/Update-FPPHelpers.ps1`,
    Windows PowerShell 5.1, ASCII only) installs the latest release. Keep the zip's file names stable:
    the updater looks for `FPP-Template-Helpers.zip` and `FPP Template Helpers.dotm`. First-time setup is the

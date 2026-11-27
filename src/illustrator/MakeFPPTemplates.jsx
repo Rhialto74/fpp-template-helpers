@@ -11,6 +11,8 @@
     - the half the artwork shows: printed as a MIRROR image (FPP is sewn from the printed side,
       so the printed template is the reverse of the finished front). Text is put back to read normally.
     - the other half: printed exactly as drawn.
+  For a template with no Left and Right (e.g. a single HST shape), choose "ONE template": it is cut
+  up exactly as drawn.
   Each side is split into "Sheet 1 of N" pages with glue strips, matching circles and trim lines,
   plus an assembly map. Exported PNGs go into a folder per side with a sheets.txt list that the
   Word macro (AddTemplateSheets) uses for page titles and sizes.
@@ -292,12 +294,17 @@
     pS.alignChildren = "left";
     var sRight = pS.add("radiobutton", undefined, "RIGHT half  (Right templates are mirrored, Left print as drawn)"); sRight.value = true;
     var sLeft = pS.add("radiobutton", undefined, "LEFT half  (Left templates are mirrored, Right print as drawn)");
+    var sOne = pS.add("radiobutton", undefined, "ONE template, no Left and Right  (printed exactly as drawn)");
     var cLeft = w.add("checkbox", undefined, "Make LEFT templates"); cLeft.value = true;
     var cRight = w.add("checkbox", undefined, "Make RIGHT templates"); cRight.value = true;
     var pR = w.add("panel", undefined, "Patch labels on the Right templates");
     pR.alignChildren = "left";
     var rSame = pR.add("radiobutton", undefined, "Same as Left (e.g. B1)"); rSame.value = true;
     var rAddR = pR.add("radiobutton", undefined, "Add an R (e.g. B-1 becomes B-1R)");
+    // Left/Right choices don't apply to a single template
+    sRight.onClick = sLeft.onClick = sOne.onClick = function () {
+        cLeft.enabled = cRight.enabled = pR.enabled = !sOne.value;
+    };
     // 1-inch scale graphic: remembered between runs; first time, look next to the section file
     var settingsFile = new File(Folder.userData.fsName + "/MakeFPPTemplates-settings.txt"), inchPath = "";
     if (settingsFile.exists && settingsFile.open("r")) { inchPath = settingsFile.readln(); settingsFile.close(); }
@@ -348,7 +355,8 @@
         alert("Please enter valid numbers. The glue strip must be at least 0.1 in and less than half the working area.");
         return;
     }
-    if (!cLeft.value && !cRight.value) { alert("Tick Left, Right or both."); return; }
+    var single = sOne.value;
+    if (!single && !cLeft.value && !cRight.value) { alert("Tick Left, Right or both."); return; }
     var outFolder = null;
     if (cExport.value) {
         var outText = eOut.text.replace(/^\s+|\s+$/g, "");
@@ -368,7 +376,7 @@
     var rot = bestRotation(hull0, W, H, OV, M);
     var angle = 0;
     if (rot.n0 > 60) { alert("This would need " + rot.n0 + " sheets per side. Check the working-area size."); return; }
-    var sidesTxt = (cLeft.value && cRight.value) ? " per side" : "";
+    var sidesTxt = (!single && cLeft.value && cRight.value) ? " per side" : "";
     if (rot.deg !== 0 && rot.n < rot.n0) {
         if (confirm("As drawn, this section needs " + rot.n0 + " sheets" + sidesTxt + ".\n" +
             "Turned " + rot.deg + " degrees, it needs " + rot.n + " sheets" + sidesTxt + ".\n\nTurn it to save paper?")) angle = rot.deg;
@@ -486,6 +494,7 @@
     function newSideRow() { if (abCount % COLS !== 0) abRow++; abCount = 0; }
 
     // ---------- build one side ----------
+    // side is "Left", "Right" or "Template" (a single template with no Left/Right).
     function buildSide(side, mirror) {
         var master = original.duplicate(srcLayer, ElementPlacement.PLACEATEND);
         master.name = side + " artwork";
@@ -508,14 +517,15 @@
         var tiles = planTiles(hull, W, H, OV, M);
         if (a && tiles.length > rot.n) { master.rotate(-2 * a); hull = hullOf(master); tiles = planTiles(hull, W, H, OV, M); }
         var bb = bounds(hull), n = tiles.length;
-        var title = secName + " - " + side;
+        // e.g. "Group A - Left Template", or "HST - Template" for a single template
+        var title = secName + " - " + (side === "Template" ? "" : side + " ") + "Template";
 
         var layer = doc.layers.add(); layer.name = title;
         newSideRow();
 
         // assembly map
         var a0 = nextArtboard(side + " 00 Map");
-        exportList.push({ side: side, file: "00-Map", title: title + " Template - Assembly Map",
+        exportList.push({ side: side, file: "00-Map", title: title + " - Assembly Map",
             sub: "Print every sheet at Actual Size, then use this map to trim and tape them together before cutting out the template." });
         var mapG = layer.groupItems.add(); mapG.name = "Assembly map";
         var pad = 0.5 * PT, titleH = 0.9 * PT;
@@ -615,7 +625,7 @@
             var pw = RR - L, ph = T - BB;
             part.translate(ar[0] + (W - pw) / 2 - L, ar[1] - (H - ph) / 2 - T);
             exportList.push({ side: side, file: "Sheet-" + (t.num < 10 ? "0" : "") + t.num,
-                title: title + " Template (Sheet " + t.num + " of " + n + ")",
+                title: title + " (Sheet " + t.num + " of " + n + ")",
                 sub: "Print at \"Actual Size\" with no scaling. Trim and tape the sheets together using the assembly map, then cut out the template." });
         }
         master.hidden = true;
@@ -624,13 +634,17 @@
 
     var made = [];
     var artIsRight = sRight.value;
-    if (cLeft.value) made.push("Left: " + buildSide("Left", !artIsRight) + " sheets" + (!artIsRight ? " (mirrored)" : " (as drawn)"));
-    if (cRight.value) made.push("Right: " + buildSide("Right", artIsRight) + " sheets" + (artIsRight ? " (mirrored)" : " (as drawn)"));
+    if (single) {
+        made.push("Template: " + buildSide("Template", false) + " sheets (as drawn)");
+    } else {
+        if (cLeft.value) made.push("Left: " + buildSide("Left", !artIsRight) + " sheets" + (!artIsRight ? " (mirrored)" : " (as drawn)"));
+        if (cRight.value) made.push("Right: " + buildSide("Right", artIsRight) + " sheets" + (artIsRight ? " (mirrored)" : " (as drawn)"));
+    }
     srcLayer.visible = false;
     doc.selection = null;
 
     // ---------- export ----------
-    var done = secName + "\n" + made.join("\n") + "\n(plus an assembly map for each side)" +
+    var done = secName + "\n" + made.join("\n") + (made.length > 1 ? "\n(plus an assembly map for each side)" : "\n(plus an assembly map)") +
         (noInch.length ? "\n\nNo empty spot for the 1-inch graphic on: " + noInch.join(", ") +
             ". Place it by hand on those sheets." : "") +
         (angle ? "\nSection turned " + angle + " degrees to save paper." : "") +
