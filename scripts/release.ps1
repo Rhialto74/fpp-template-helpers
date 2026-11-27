@@ -71,6 +71,9 @@ if ($DryRun) { Write-Host "Dry run: checks and tests passed. Would release $tag.
 
 if ($ahead -gt 0) { Invoke-Checked git @('push', 'origin', 'main') }
 & (Join-Path $PSScriptRoot 'build-release.ps1') -Version $tag -TemporarilyTrustVba
+# Last check on exactly what will be published (v1.1.0 and v1.4.1 shipped an add-in without its macros).
+Invoke-Checked powershell.exe @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
+    (Join-Path $PSScriptRoot 'check-word-addin.ps1'), '-Path', 'dist\FPP-Template-Helpers.zip')
 
 Invoke-Checked git @('tag', '-a', $tag, '-m', "Release $tag")
 Invoke-Checked git @('push', 'origin', $tag)

@@ -34,23 +34,41 @@ if ($old -ne 1) {
     $changed = $true
 }
 
+# Word sometimes saves the .dotm with the code (word/vbaProject.bin) but without the part that links it
+# to the template (word/_rels/vbaProject.bin.rels) and the macro list (word/vbaData.xml). Word then
+# ignores the code: no AddTemplateSheets in View > Macros. That shipped in v1.1.0 and v1.4.1.
+# So check the saved file (scripts\check-word-addin.ps1) and build again if needed.
+$checker = Join-Path $PSScriptRoot 'check-word-addin.ps1'
+$ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+
 $word = $null
 try {
     $word = New-Object -ComObject Word.Application
     $word.Visible = $false
     $word.DisplayAlerts = 0
-    $doc = $word.Documents.Add()
-    $null = $doc.VBProject.VBComponents.Import($bas)
-    # Name the project so View > Macros shows "FPPHelpers.FPPSheets.AddTemplateSheets", not the default "Project".
-    $doc.VBProject.Name = 'FPPHelpers'
     $dir = Split-Path -Parent $OutFile
     if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
-    if (Test-Path $OutFile) { Remove-Item $OutFile -Force }
-    $doc.SaveAs2($OutFile, 15)   # 15 = wdFormatXMLTemplateMacroEnabled (.dotm)
-    $names = @($doc.VBProject.VBComponents | ForEach-Object { $_.Name })
-    $doc.Close(0)
-    if ($names -notcontains 'FPPSheets') { throw "Add-in was built without the FPPSheets module (found: $($names -join ', '))." }
-    Write-Host "Built $OutFile"
+    $ok = $false
+    for ($attempt = 1; $attempt -le 3 -and -not $ok; $attempt++) {
+        $doc = $word.Documents.Add()
+        $null = $doc.VBProject.VBComponents.Import($bas)
+        # Name the project so View > Macros shows "FPPHelpers.FPPSheets.AddTemplateSheets", not the default "Project".
+        $doc.VBProject.Name = 'FPPHelpers'
+        Start-Sleep -Milliseconds 500
+        if (Test-Path $OutFile) { Remove-Item $OutFile -Force }
+        $doc.SaveAs2($OutFile, 15)   # 15 = wdFormatXMLTemplateMacroEnabled (.dotm)
+        $names = @($doc.VBProject.VBComponents | ForEach-Object { $_.Name })
+        $doc.Close(0)
+        if ($names -notcontains 'FPPSheets') { throw "Add-in was built without the FPPSheets module (found: $($names -join ', '))." }
+        $result = & $ps -NoProfile -ExecutionPolicy Bypass -File $checker -Path $OutFile
+        if ($LASTEXITCODE -eq 0) { $ok = $true }
+        else { Write-Warning "Attempt ${attempt}: $result Building again." }
+    }
+    if (-not $ok) {
+        Remove-Item $OutFile -Force -ErrorAction SilentlyContinue
+        throw 'Word kept saving the add-in without its macros. Nothing was released; try again.'
+    }
+    Write-Host "Built $OutFile (macros checked)"
 } finally {
     if ($word) {
         # Quit() with no arguments: passing wdDoNotSaveChanges fails in Windows PowerShell (ref params).

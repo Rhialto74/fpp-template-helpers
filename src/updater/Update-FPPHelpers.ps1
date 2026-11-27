@@ -209,12 +209,36 @@ function Find-OldWordModules([string]$normal) {
     }
 }
 
+# True if the installed add-in really carries its macros. Some builds (v1.1.0, v1.4.1) were saved
+# without the parts that link the code in, and Word then ignores it.
+function Test-AddinHasMacros {
+    $p = Join-Path (Get-WordStartupFolder) $AddinName
+    if (-not (Test-Path -LiteralPath $p)) { return $false }
+    $fs = $null; $zip = $null
+    try {
+        $fs = [IO.File]::Open($p, 'Open', 'Read', 'ReadWrite')
+        $zip = New-Object IO.Compression.ZipArchive($fs, [IO.Compression.ZipArchiveMode]::Read)
+        $names = @($zip.Entries | ForEach-Object { $_.FullName })
+        if (($names -notcontains 'word/_rels/vbaProject.bin.rels') -or ($names -notcontains 'word/vbaData.xml')) { return $false }
+        $d = $zip.Entries | Where-Object { $_.FullName -eq 'word/vbaData.xml' } | Select-Object -First 1
+        $r = New-Object IO.StreamReader($d.Open()); $t = $r.ReadToEnd(); $r.Close()
+        return ($t -match 'FPPSheets\.AddTemplateSheets')
+    } catch { return $false } finally {
+        if ($zip) { $zip.Dispose() }
+        if ($fs) { $fs.Dispose() }
+    }
+}
+
 # Returns a sentence for the closing message, or ''. Needs Word closed (the caller makes sure).
 function Remove-OldWordMacros([string]$helperFolder) {
     $normal = Get-NormalTemplatePath
     $found = Find-OldWordModules $normal
     if ($found.Count -eq 0) { return '' }
     if (Get-Process -Name WINWORD -ErrorAction SilentlyContinue) { return '' }   # try again next time
+    # Never remove the old copy while the add-in has no working macros: it would leave none at all.
+    if (-not (Test-AddinHasMacros)) {
+        return "The Word helper add-in didn't install properly, so Word may be using an older copy. Please run Update FPP Helpers again later, and tell whoever looks after these helpers."
+    }
 
     $answer = Show-Msg ("Word has an old copy of the Word helper in its Normal template, so the helper shows up twice in View > Macros.`n`n" +
         "Remove the old copy? A backup of the Normal template is saved first.") 'Question' 'YesNo'
@@ -238,9 +262,19 @@ function Remove-OldWordMacros([string]$helperFolder) {
         $word = New-Object -ComObject Word.Application
         $word.Visible = $false
         $word.DisplayAlerts = 0
-        $comps = $word.NormalTemplate.VBProject.VBComponents
-        foreach ($c in @($comps)) { if ($OldWordModules -contains $c.Name) { $comps.Remove($c) } }
-        $word.NormalTemplate.Save()
+        # Open Normal.dotm itself: a Word started from a script doesn't load Normal's macros, so
+        # $word.NormalTemplate.VBProject looks empty there (that silently removed nothing in v1.4.x).
+        $t = $word.Documents.Open($normal, $false, $false)
+        $comps = $t.VBProject.VBComponents
+        for ($i = $comps.Count; $i -ge 1; $i--) {
+            $c = $comps.Item($i)
+            if ($OldWordModules -contains $c.Name) { $comps.Remove($c) }
+        }
+        $t.Save()
+        $left = @()
+        for ($i = 1; $i -le $comps.Count; $i++) { if ($OldWordModules -contains $comps.Item($i).Name) { $left += $comps.Item($i).Name } }
+        $t.Close(0)
+        if ($left.Count -gt 0) { $err = 'still there: ' + ($left -join ', ') }
     } catch { $err = $_.Exception.Message } finally {
         if ($word) {
             try { $word.Quit() } catch { }
@@ -254,7 +288,8 @@ function Remove-OldWordMacros([string]$helperFolder) {
         else { Set-ItemProperty -Path $secKey -Name AccessVBOM -Value $old -Type DWord }
     }
 
-    if (-not $err -and (Find-OldWordModules $normal).Count -eq 0) {
+    # Trust Word's own list (checked above): the raw file can keep old text in unused space.
+    if (-not $err) {
         return "Removed the old copy of the Word helper from Word's Normal template (backup: $backup)."
     }
     return "The old copy of the Word helper couldn't be removed from Word's Normal template, so it may still show up twice. The guide (Part 2) shows how to remove it by hand."
