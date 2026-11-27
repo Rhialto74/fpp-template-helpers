@@ -98,7 +98,9 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
 4. Ship with `scripts/release.ps1 -Version x.y.z -TemporarilyTrustVba` (needs Word). It publishes a GitHub
    release; the designer's **Update FPP Helpers** desktop icon (`src/updater/Update-FPPHelpers.ps1`,
    Windows PowerShell 5.1, ASCII only) installs the latest release. Keep the zip's file names stable:
-   the updater looks for `FPP-Template-Helpers.zip` and `FPP Template Helpers.dotm`.
+   the updater looks for `FPP-Template-Helpers.zip` and `FPP Template Helpers.dotm`. First-time setup is the
+   separate release asset `Install-FPP-Helpers.cmd` (ASCII, CRLF, name without spaces: GitHub turns spaces in
+   asset names into dots); the guide links to `releases/latest/download/Install-FPP-Helpers.cmd`.
 5. Self-update: the running updater is the OLD code, even after it copies the new one over itself.
    If the copied updater differs from the running one, it starts the new copy with `-Finish` (plus
    `-PreviousVersion`, `-Install`), which runs `Complete-Install` (after-install steps and closing message)

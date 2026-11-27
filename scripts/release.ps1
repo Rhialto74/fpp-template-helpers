@@ -30,5 +30,8 @@ Invoke-Checked npm @('test')
 Invoke-Checked git @('tag', '-a', $tag, '-m', "Release $tag")
 Invoke-Checked git @('push', 'origin', $tag)
 if (-not $Notes) { $Notes = "FPP Template Helpers $tag" }
-Invoke-Checked gh @('release', 'create', $tag, 'dist\FPP-Template-Helpers.zip', '--title', $tag, '--notes', $Notes)
+# The installer is attached on its own too: the guide links to releases/latest/download/Install-FPP-Helpers.cmd.
+# Keep its name space-free (GitHub turns spaces in asset names into dots).
+Invoke-Checked gh @('release', 'create', $tag, 'dist\FPP-Template-Helpers.zip', 'src\updater\Install-FPP-Helpers.cmd',
+    '--title', $tag, '--notes', $Notes)
 Write-Host "Released $tag. On the designer's computer: double-click 'Update FPP Helpers'."

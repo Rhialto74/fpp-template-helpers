@@ -50,7 +50,9 @@ Run on a Windows PC with Word, from a clean, pushed `main`. It runs the tests, b
 `-TemporarilyTrustVba` switches Word's "Trust access to the VBA project object model" on only while
 the add-in is built, then restores it.
 
-On the designer's computer, setup is once: download the zip from the latest release, extract it and
-double-click `Set up updates (run once).cmd`. That installs into `Documents\FPP-Template-Helpers`,
+The release also carries `Install-FPP-Helpers.cmd` (from `src/updater/`) on its own. On the designer's
+computer, setup is once: download it (the guide links to `releases/latest/download/Install-FPP-Helpers.cmd`)
+and double-click it. It downloads the latest zip to a temp folder and runs the setup inside it
+(`Update FPP Helpers.ps1 -Install`; the zip's `Set up updates (run once).cmd` does the same). That installs into `Documents\FPP-Template-Helpers`,
 copies the add-in into Word's Startup folder (Word loads it on start) and creates an
 **Update FPP Helpers** desktop icon, which fetches the latest release whenever she clicks it.
