@@ -297,13 +297,10 @@
     var sOne = pS.add("radiobutton", undefined, "ONE template, no Left and Right  (printed exactly as drawn)");
     var cLeft = w.add("checkbox", undefined, "Make LEFT templates"); cLeft.value = true;
     var cRight = w.add("checkbox", undefined, "Make RIGHT templates"); cRight.value = true;
-    var pR = w.add("panel", undefined, "Patch labels on the Right templates");
-    pR.alignChildren = "left";
-    var rSame = pR.add("radiobutton", undefined, "Same as Left (e.g. B1)"); rSame.value = true;
-    var rAddR = pR.add("radiobutton", undefined, "Add an R (e.g. B-1 becomes B-1R)");
+    w.add("statictext", undefined, "Patch labels get L on Left sheets and R on Right sheets (A-1 becomes A-1L / A-1R).");
     // Left/Right choices don't apply to a single template
     sRight.onClick = sLeft.onClick = sOne.onClick = function () {
-        cLeft.enabled = cRight.enabled = pR.enabled = !sOne.value;
+        cLeft.enabled = cRight.enabled = !sOne.value;
     };
     // 1-inch scale graphic: remembered between runs; first time, look next to the section file
     var settingsFile = new File(Folder.userData.fsName + "/MakeFPPTemplates-settings.txt"), inchPath = "";
@@ -493,6 +490,17 @@
     }
     function newSideRow() { if (abCount % COLS !== 0) abRow++; abCount = 0; }
 
+    // Patch numbers look like A-1, B12 or AB-3 (one or two capitals, optional hyphen, 1-3 digits).
+    // One already followed by a letter (A-1R) is not a match, so nothing is doubled.
+    function addSideLetter(tf, letter) {
+        var c = tf.contents, re = /\b([A-Z]{1,2}-?\d{1,3})\b/g, m, ends = [], i, ch;
+        while ((m = re.exec(c)) !== null) ends.push(m.index + m[0].length);
+        for (i = ends.length - 1; i >= 0; i--) {
+            ch = tf.characters[ends[i] - 1];
+            ch.contents = ch.contents + letter;
+        }
+    }
+
     // ---------- build one side ----------
     // side is "Left", "Right" or "Template" (a single template with no Left/Right).
     function buildSide(side, mirror) {
@@ -505,12 +513,11 @@
                 tf.resize(-100, 100, true, true, true, true, 100, Transformation.CENTER);
             });
         }
-        if (side === "Right" && rAddR.value) {
-            eachText(master, function (tf) {
-                var c = tf.contents, n = c.replace(/\b([A-Z]{1,2}-?\d{1,3})\b/g, "$1R");
-                if (n !== c) tf.contents = n;
-            });
-        }
+        // Patch labels say which side they're on: A-1 becomes A-1L / A-1R (not on a single template).
+        // The letter is added after the last character of each patch number, so it takes that
+        // character's formatting and the rest of the label keeps its own.
+        var suffix = side === "Left" ? "L" : (side === "Right" ? "R" : "");
+        if (suffix) eachText(master, function (tf) { addSideLetter(tf, suffix); });
         var a = mirror ? -angle : angle;
         if (a) master.rotate(a);
         var hull = hullOf(master);

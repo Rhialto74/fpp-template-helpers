@@ -26,10 +26,12 @@ sheets that the quilter prints at true size, trims, tapes together and then cuts
   Therefore: **Right templates = mirrored artwork; Left templates = artwork as drawn.**
   The dialog asks which half the artwork shows (default RIGHT) and the code derives the rest.
 - Not every template is a Left/Right pair (e.g. a single HST shape). The dialog's third choice, "ONE
-  template", builds one side named "Template", printed exactly as drawn (no mirroring, no "add R").
+  template", builds one side named "Template", printed exactly as drawn (no mirroring, no L/R letters).
   Titles `<Section> - Template (Sheet n of N)`, folder `<Section> - Template`; Word needs nothing new.
 - When mirroring, every TextFrame is flipped back in place so labels read normally.
-- Patch labels look like `A-1 (Color 2)`. Optional "add R" turns `A-1` into `A-1R` on Right sheets.
+- Patch labels look like `A-1 (Color 2)`. On Left/Right sets they ALWAYS get the side letter: `A-1L` on Left
+  sheets, `A-1R` on Right sheets (`addSideLetter`; no option). The letter is inserted after the patch number's
+  last character so mixed formatting survives; `A-1R` is not doubled. Single templates are left as they are.
 - Sheet labels say "Sheet 3 of 7" – deliberately NOT "A1/B2" style, which would clash with patch labels.
 - All text the Illustrator helper adds (sheet labels, join notes, map) uses Gadugi Regular.
 - Working area defaults to 7.25 x 8.75 in (fits her Word template between header and footer); glue
