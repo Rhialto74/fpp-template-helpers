@@ -101,12 +101,22 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
    the updater looks for `FPP-Template-Helpers.zip` and `FPP Template Helpers.dotm`. First-time setup is the
    separate release asset `Install-FPP-Helpers.cmd` (ASCII, CRLF, name without spaces: GitHub turns spaces in
    asset names into dots); the guide links to `releases/latest/download/Install-FPP-Helpers.cmd`.
-5. Self-update: the running updater is the OLD code, even after it copies the new one over itself.
+5. Output folder: `%APPDATA%\FPP-Template-Helpers\output-folder.txt` (one line, UTF-8, no BOM), shared by all
+   three. Setup (`Complete-Install`) asks for it once (again only if the folder is gone) with a folder dialog
+   starting at `Documents\FPP-Template-Helpers\Pattern-Sheets`, and makes the **Update Output Folder** desktop
+   icon (`Update FPP Helpers.ps1 -ChooseOutputFolder`), the only way to change the saved default. The Illustrator
+   dialog's "Save the sheets in" defaults to it; Browse there is for that run only (never saved). Word's
+   folder picker opens there (`SavedOutputFolder`). The Word add-in's VBA project is named `FPPHelpers`.
+   An old manual import in Normal.dotm shows up as a second `Normal.FPPSheets.AddTemplateSheets`.
+   `Complete-Install` finds it without Word (`Module=FPPSheets|TileDocBuilder` in the PROJECT stream of
+   `word/vbaProject.bin`), asks, backs Normal.dotm up to `Documents\FPP-Template-Helpers\Backups`, and removes
+   only those modules via Word COM with AccessVBOM switched on just for that and restored after Word exits.
+6. Self-update: the running updater is the OLD code, even after it copies the new one over itself.
    If the copied updater differs from the running one, it starts the new copy with `-Finish` (plus
    `-PreviousVersion`, `-Install`), which runs `Complete-Install` (after-install steps and closing message)
    without downloading again. Put new install steps in `Complete-Install`. Updaters older than v1.2.0 don't
    do this, so moving from those takes a second click for new steps.
-6. Illustrator menu entry: the updater writes a small launcher, `Make FPP Templates.jsx`, into every
+7. Illustrator menu entry: the updater writes a small launcher, `Make FPP Templates.jsx`, into every
    `Program Files\Adobe\Adobe Illustrator*\Presets\<locale>\Scripts` folder. It asks first, then needs one admin prompt.
    The launcher only does `$.evalFile` on `Documents\FPP-Template-Helpers\MakeFPPTemplates.jsx`, so updates
    need no admin rights. It is rewritten only when missing or different. Under `$.evalFile`, `$.fileName` is

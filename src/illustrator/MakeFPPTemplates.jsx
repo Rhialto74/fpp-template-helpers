@@ -262,6 +262,16 @@
         .replace(/[\s_-]*gr[ae]y[\s_-]*filled$/i, "").replace(/[\s_-]*(left|right)[\s_-]*image$/i, "")
         .replace(/[\s_-]*(left|right)$/i, "").replace(/^\s+|\s+$/g, "");
 
+    // Settings shared with the Word helper and the updater: one-line UTF-8 files in
+    // %APPDATA%\FPP-Template-Helpers (Folder.userData is %APPDATA% on Windows).
+    function readSharedSetting(name) {
+        var f = new File(Folder.userData.fsName + "/FPP-Template-Helpers/" + name), s = "";
+        if (!f.exists) return "";
+        f.encoding = "UTF-8";
+        if (f.open("r")) { s = f.read(); f.close(); }
+        return s.replace(/^﻿/, "").replace(/^\s+|\s+$/g, "");
+    }
+
     // ---------- dialog ----------
     var w = new Window("dialog", "Make FPP template sheets (Left and Right)");
     w.orientation = "column"; w.alignChildren = "left";
@@ -307,6 +317,25 @@
     var bInch = gI.add("button", undefined, "Browse...");
     bInch.onClick = function () { var f = File.openDialog("Choose the 1-inch graphic (.ai)", "*.ai"); if (f) eInch.text = f.fsName; };
     var cExport = w.add("checkbox", undefined, "Export the sheets for Word (300 ppi PNGs) afterward"); cExport.value = true;
+    // Output folder: chosen during setup (and with the "Update Output Folder" desktop icon), shared with
+    // the Word helper. Changing it here is for this run only.
+    var outPath = readSharedSetting("output-folder.txt");
+    if (!outPath || !new Folder(outPath).exists) {
+        var guessOut = new Folder(Folder.myDocuments.fsName + "/FPP-Template-Helpers/Pattern-Sheets");
+        outPath = guessOut.exists ? guessOut.fsName : "";
+    }
+    var pO = w.add("panel", undefined, "Save the sheets in (a folder for each side is made inside)");
+    pO.alignChildren = "left";
+    var gO = pO.add("group");
+    var eOut = gO.add("edittext", undefined, outPath); eOut.preferredSize.width = 330;
+    var bOut = gO.add("button", undefined, "Browse...");
+    bOut.onClick = function () {
+        var start = new Folder(eOut.text), f;
+        f = start.exists ? start.selectDlg("Choose where to save the sheets") : Folder.selectDialog("Choose where to save the sheets");
+        if (f) eOut.text = f.fsName;
+    };
+    pO.add("statictext", undefined, "To change the usual folder, use 'Update Output Folder' on the desktop.");
+    cExport.onClick = function () { pO.enabled = cExport.value; };
     var bg = w.add("group");
     bg.add("button", undefined, "Cancel", { name: "cancel" });
     bg.add("button", undefined, "OK", { name: "ok" });
@@ -320,6 +349,15 @@
         return;
     }
     if (!cLeft.value && !cRight.value) { alert("Tick Left, Right or both."); return; }
+    var outFolder = null;
+    if (cExport.value) {
+        var outText = eOut.text.replace(/^\s+|\s+$/g, "");
+        if (!outText) { alert("Choose where to save the sheets: click Browse... next to 'Save the sheets in'."); return; }
+        outFolder = new Folder(outText);
+        if (!outFolder.exists && !outFolder.create()) {
+            alert("Couldn't make the folder:\n" + outText + "\n\nUse Browse... to pick another one."); return;
+        }
+    }
     var inchFile = null;
     if (cInch.value) {
         inchFile = new File(eInch.text);
@@ -599,7 +637,7 @@
         (labelFont ? "" : "\n\nThe Gadugi font isn't installed, so sheet text uses Illustrator's default font.") +
         "\n\nYour original file was not changed.";
     if (cExport.value) {
-        var folder = Folder.selectDialog("Choose where to save the sheets (a subfolder is made for each side)");
+        var folder = outFolder;
         if (folder) {
             var opts = new ExportOptionsPNG24();
             opts.artBoardClipping = true;

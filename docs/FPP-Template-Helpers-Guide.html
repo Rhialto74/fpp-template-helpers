@@ -108,7 +108,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
 
 <section id="unzip">
   <h2>Step 0 · Set up the helpers (once per computer)</h2>
-  <p class="lead">Do this once. It puts the helpers in their own folder, adds the Word helper to Word, adds the Illustrator helper to Illustrator's menu, and puts an <b>Update FPP Helpers</b> icon on your desktop for later.</p>
+  <p class="lead">Do this once. It puts the helpers in their own folder, adds the Word helper to Word, adds the Illustrator helper to Illustrator's menu, asks where your template sheets should go, and puts two icons on your desktop for later: <b>Update FPP Helpers</b> and <b>Update Output Folder</b>.</p>
   <ol class="steps">
     <li>Close Word and Illustrator if they're open.</li>
     <li><a href="https://github.com/Rhialto74/fpp-template-helpers/releases/latest/download/Install-FPP-Helpers.cmd">Download the installer</a> (<span class="file">Install-FPP-Helpers.cmd</span>).
@@ -117,7 +117,9 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
       <span class="see">If a box says "The publisher could not be verified", click <b>Run</b>. If Windows shows a blue "Windows protected your PC" box, click <b>More info</b>, then <b>Run anyway</b>. You may see one, both or neither. A black window says it's downloading; leave it open – it closes by itself.</span></li>
     <li>It asks whether to put <b>Make FPP Templates</b> in Illustrator's <span class="menu">File › Scripts</span> menu. Click <b>Yes</b>, then <b>Yes</b> again when Windows asks for permission.
       <span class="see">This is needed only once. If you click No, you can still open the helper with <span class="menu">File › Scripts › Other Script…</span>, and the next update asks again.</span></li>
-    <li>A message says the helpers are installed. You now have a folder <span class="menu">Documents › FPP-Template-Helpers</span> and a new <b>Update FPP Helpers</b> icon on your desktop. You can delete <span class="file">Install-FPP-Helpers</span> from Downloads.
+    <li>A window asks you to <b>choose the folder for your template sheets</b>. It starts at <span class="menu">Documents › FPP-Template-Helpers › Pattern-Sheets</span>; click <b>OK</b> to use that, or pick another folder first.
+      <span class="see">The Illustrator helper saves sheets there every time, and the Word helper opens that folder when it asks for the sheets. To change it later, double-click <b>Update Output Folder</b> on your desktop.</span></li>
+    <li>A message says the helpers are installed. You now have a folder <span class="menu">Documents › FPP-Template-Helpers</span> and two new icons on your desktop: <b>Update FPP Helpers</b> and <b>Update Output Folder</b>. You can delete <span class="file">Install-FPP-Helpers</span> from Downloads.
       <span class="see">Tip: drag <span class="file">FPP-Template-Helpers</span> onto "Quick access" in the left column of File Explorer so it's always one click away.</span></li>
     <li>Put your section files (the Group A–D files) in <span class="menu">Documents › FPP-Template-Helpers</span>, next to <span class="file">1 Inch.ai</span>. Keeping everything in one folder on the computer lets the Illustrator helper fill in the section name and find the 1-inch graphic by itself. Updates never change or remove your own files.
       <span class="see">If a section file lives in Adobe's cloud, save a computer copy first: open it in Illustrator, choose <span class="menu">File › Save a Copy…</span>, click <b>Save on your computer</b> if Illustrator offers it, go to <span class="menu">Documents › FPP-Template-Helpers</span>, keep the type as <b>Adobe Illustrator (*.AI)</b>, Save, and click OK in the options window. Then open that copy for Part 1.</span></li>
@@ -147,7 +149,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
 
   <h3>Before the first file (once)</h3>
   <ol class="steps">
-    <li>Make an empty folder for the results: in <span class="menu">Documents › FPP-Template-Helpers</span>, right-click an empty area › <b>New › Folder</b>, and name it <span class="file">Pattern-Sheets</span>. If it already has folders from an earlier try, delete them so old pages don't end up in Word.</li>
+    <li>Open your sheets folder (the one you chose in Step 0 – <span class="file">Pattern-Sheets</span> unless you changed it). If it has folders from an earlier pattern or try, delete them so old pages don't end up in Word.</li>
   </ol>
 
   <h3>For each section file</h3>
@@ -166,10 +168,11 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
         <li><b>Make LEFT / Make RIGHT</b> – leave both ticked.</li>
         <li><b>Patch labels on the Right templates</b> – "Same as Left" or "Add an R" (A-1 becomes A-1R). Your choice; use the same for every section.</li>
         <li><b>1-inch scale graphic</b> – should already show the path to <span class="file">1 Inch.ai</span>. If it's empty, click <b>Browse…</b>, go to <span class="menu">Documents › FPP-Template-Helpers</span> and pick it once; it's remembered after that.</li>
+        <li><b>Save the sheets in</b> – shows your sheets folder. Leave it. (Browse… picks another folder for this run only; to change the usual folder, use <b>Update Output Folder</b> on your desktop.)</li>
       </ul>
       Click <b>OK</b>.</li>
     <li>If it asks whether to <b>turn the section to save paper</b>, either answer is fine. "Yes" uses fewer sheets with the shape slightly tilted on the paper.</li>
-    <li>When it asks where to save, go to <span class="menu">Documents › FPP-Template-Helpers</span> and pick the <span class="file">Pattern-Sheets</span> folder – the <b>same folder every time</b>. It makes two folders inside, e.g. "Group A - Left" and "Group A - Right".</li>
+    <li>It saves the sheets in your sheets folder by itself, making two folders inside, e.g. "Group A - Left" and "Group A - Right".</li>
     <li>A message says how many sheets each side has. If it lists sheets with <b>no room for the 1-inch graphic</b>, that's normal for a sheet completely covered by the template; the square on the other sheets still checks the scale.</li>
     <li>A new, untitled document is open with all the sheets. You can close it <b>without saving</b> – the pictures are already saved. Your original file is never changed.</li>
   </ol>
@@ -180,7 +183,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
   <h2>Part 2 · Word</h2>
   <p class="lead">Nothing to do: Step 0 added the Word helper to Word, and Word loads it by itself every time it starts. You'll find it under <span class="menu">View › Macros</span> as <b>AddTemplateSheets</b>.</p>
   <div class="note"><b>If Word says macros are disabled:</b> <span class="menu">File › Options › Trust Center › Trust Center Settings… › Macro Settings</span>, choose <b>"Disable VBA macros with notification"</b> (or similar wording), OK, and restart Word.</div>
-  <div class="note"><b>Used an older version that you added through Developer › Visual Basic?</b> Remove that copy once, so Word doesn't list the helper twice: <span class="menu">Developer › Visual Basic</span>, under <b>Normal › Modules</b> right-click <b>FPPSheets</b>, choose <b>Remove FPPSheets</b> (answer <b>No</b> to exporting), and close that window.</div>
+  <div class="note"><b>Does the Macros list show the helper twice</b>, e.g. as <b>Normal.FPPSheets.AddTemplateSheets</b> and <b>FPPHelpers.FPPSheets.AddTemplateSheets</b>? The "Normal" one is an old copy from before the set-up did this for you. <b>Update FPP Helpers</b> offers to remove it (click <b>Yes</b>; Word must be closed). To remove it by hand instead: <span class="menu">Developer › Visual Basic</span>, under <b>Normal › Modules</b> right-click <b>FPPSheets</b>, choose <b>Remove FPPSheets</b> (answer <b>No</b> to exporting), and close that window.</div>
 </section>
 
 <section id="word">
@@ -189,13 +192,13 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
     <li>Open <span class="file">BRS Pattern Template.docx</span> and <b>straight away</b> use <span class="menu">File › Save As</span> to save it under the pattern's name (e.g. "Deco Pattern.docx"). This keeps the template clean.</li>
     <li>Click the <span class="menu">View</span> tab, then <span class="menu">Macros</span> (far right) › <span class="menu">View Macros</span>.</li>
     <li>Click <b>AddTemplateSheets</b> in the list, then <b>Run</b>.</li>
-    <li>Go to <span class="menu">Documents › FPP-Template-Helpers</span>, click the <span class="file">Pattern-Sheets</span> folder itself (not one of the folders inside it) and click OK.
+    <li>The folder window opens at your sheets folder. Click <b>OK</b> to add everything in it.
       <span class="see">You can also pick just one folder, such as "Group A - Left", to add only that.</span></li>
     <li>It asks "Add <i>N</i> page(s) to the end of …?" – click <b>OK</b>. It takes a moment.
       <span class="see">Each sheet gets its own page with a teal title such as "Group A - Left Template (Sheet 2 of 5)", a short print note, and the sheet at its exact size. Every section starts with its assembly map.</span></li>
     <li>Scroll through and check a few pages, then save.</li>
   </ol>
-  <div class="note"><b>Page order:</b> sections are added in folder-name order (Group A, B, C, D), Left before Right. To change it, rename the folders inside Pattern-Sheets with a number in front (e.g. "1 Group C - Left"). Titles on the pages don't change.</div>
+  <div class="note"><b>Page order:</b> sections are added in folder-name order (Group A, B, C, D), Left before Right. To change it, rename the folders inside your sheets folder with a number in front (e.g. "1 Group C - Left"). Titles on the pages don't change.</div>
   <div class="warn"><b>Ran it twice by accident?</b> Close the document without saving and start again from your last saved copy.</div>
 </section>
 
@@ -215,7 +218,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
     <li>Save your work and close Word.</li>
     <li>Double-click <b>Update FPP Helpers</b> on your desktop.</li>
     <li>A message says either that you already have the newest version, or which version was installed. That's it – the next time you open Illustrator and Word they use the new version.
-      <span class="see">If it asks you to close Word, do that and click OK. After a new Illustrator version is installed it may ask again about the <span class="menu">File › Scripts</span> menu – click Yes. Your section files, <span class="file">Pattern-Sheets</span> and your <span class="file">1 Inch.ai</span> are never changed.</span></li>
+      <span class="see">If it asks you to close Word, do that and click OK. After a new Illustrator version is installed it may ask again about the <span class="menu">File › Scripts</span> menu – click Yes. Your section files, your sheets folder and your <span class="file">1 Inch.ai</span> are never changed.</span></li>
   </ol>
 </section>
 
@@ -228,7 +231,8 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
       <tr><td data-l="You see">Section name is blank or strange, or the 1-inch path is empty</td><td data-l="Do this">The file was opened from Adobe's cloud. Type the name in yourself and use Browse for <span class="file">1 Inch.ai</span> – or better, save a computer copy as in Step 0 and use that.</td></tr>
       <tr><td data-l="You see">Labels read backwards on one side</td><td data-l="Do this">Those labels were turned into outlines. Retype them with the Type tool as normal text and rerun.</td></tr>
       <tr><td data-l="You see">"AddTemplateSheets" isn't in the Macros list</td><td data-l="Do this">Close Word, double-click <b>Update FPP Helpers</b> on your desktop, then open Word again. If it's still missing, check the macro setting in Part 2.</td></tr>
-      <tr><td data-l="You see">"No sheets were found there"</td><td data-l="Do this">You picked the wrong folder. Pick <span class="file">Pattern-Sheets</span>, or one of the "… - Left/Right" folders inside it.</td></tr>
+      <tr><td data-l="You see">"No sheets were found there"</td><td data-l="Do this">You picked the wrong folder. Pick your sheets folder, or one of the "… - Left/Right" folders inside it.</td></tr>
+      <tr><td data-l="You see">You want the sheets saved somewhere else</td><td data-l="Do this">Double-click <b>Update Output Folder</b> on your desktop and choose the new folder. Both helpers use it from then on.</td></tr>
       <tr><td data-l="You see">A warning that pictures were stretched</td><td data-l="Do this">A sheet picture was edited or swapped. Rerun the Illustrator helper for that section and add the pages again.</td></tr>
       <tr><td data-l="You see">Printed 1-inch square isn't 1 inch</td><td data-l="Do this">Something is scaling the print. Check Part 4, especially Printer Properties.</td></tr>
       <tr><td data-l="You see">A red error box in Illustrator or Word</td><td data-l="Do this">Screenshot it and send it on. Nothing in your original files is changed.</td></tr>

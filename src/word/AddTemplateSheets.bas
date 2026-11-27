@@ -25,6 +25,10 @@ Public Sub AddTemplateSheets()
     Dim fd As FileDialog
     Set fd = Application.FileDialog(msoFileDialogFolderPicker)
     fd.Title = "Choose a sheets folder (e.g. 'Dark Blue - Left') or a folder holding several"
+    ' Start in the output folder chosen during setup (shared with the Illustrator helper).
+    Dim outDir As String
+    outDir = SavedOutputFolder()
+    If Len(outDir) > 0 Then fd.InitialFileName = outDir & "\"
     If fd.Show <> -1 Then Exit Sub
     Dim root As String
     root = fd.SelectedItems(1)
@@ -181,6 +185,21 @@ Private Function AddSheetPage(doc As Document, ByVal f As String, ByVal ttl As S
         .Top = ps.PageHeight - InchesToPoints(BOTTOM_RESERVE_IN) - .Height
         .LockAnchor = True
     End With
+End Function
+
+' The output folder saved by setup / the "Update Output Folder" icon, or "" if none (or it's gone).
+Private Function SavedOutputFolder() As String
+    Dim p As String, lines() As String, s As String
+    p = Environ$("APPDATA") & "\FPP-Template-Helpers\output-folder.txt"
+    If Len(Dir(p)) = 0 Then Exit Function
+    On Error GoTo Done
+    lines = ReadLines(p)
+    s = Trim$(lines(0))
+    If Right$(s, 1) = "\" Then s = Left$(s, Len(s) - 1)
+    If Len(s) > 0 Then
+        If (GetAttr(s) And vbDirectory) = vbDirectory Then SavedOutputFolder = s
+    End If
+Done:
 End Function
 
 Private Function ReadLines(ByVal p As String) As String()

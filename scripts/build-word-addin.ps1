@@ -41,6 +41,8 @@ try {
     $word.DisplayAlerts = 0
     $doc = $word.Documents.Add()
     $null = $doc.VBProject.VBComponents.Import($bas)
+    # Name the project so View > Macros shows "FPPHelpers.FPPSheets.AddTemplateSheets", not the default "Project".
+    $doc.VBProject.Name = 'FPPHelpers'
     $dir = Split-Path -Parent $OutFile
     if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
     if (Test-Path $OutFile) { Remove-Item $OutFile -Force }
