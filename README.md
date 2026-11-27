@@ -40,15 +40,19 @@ scripts/release.ps1                       tests, builds, tags and publishes a Gi
 
 ## Release
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\release.ps1 -Version 1.2.0 -Notes "What changed" -TemporarilyTrustVba
-```
+Close Word, then double-click `release.cmd` (or run `.\release` in a terminal in the repo folder).
 
-Run on a Windows PC with Word, from a clean, pushed `main`. It runs the tests, builds
+It needs a Windows PC with Word, a clean `main`, and the GitHub account that can push to this repo
+(`git` and `gh auth login`). It shows the next version (last release + 0.1.0) and notes made from the
+commit subjects since the last release, and waits: Enter releases, typing a version (e.g. `1.3.1`)
+changes it, `N` stops. Then it pushes `main` if needed, runs the tests, builds
 `dist\FPP-Template-Helpers.zip` (guide, Illustrator helper, Word add-in `FPP Template Helpers.dotm`,
-`1 Inch.ai`, updater, `version.txt`), tags `v1.2.0` and creates a GitHub release with the zip.
-`-TemporarilyTrustVba` switches Word's "Trust access to the VBA project object model" on only while
-the add-in is built, then restores it.
+`1 Inch.ai`, updater, `version.txt`), tags the version and creates a GitHub release with the zip and
+`Install-FPP-Helpers.cmd`. Word's "Trust access to the VBA project object model" is switched on only
+while the add-in is built, then restored.
+
+Options (also through `release.cmd`): `-Version 1.3.1`, `-Notes "..."`, `-Yes` (no question),
+`-DryRun` (checks, tests and preview only; nothing pushed or published).
 
 The release also carries `Install-FPP-Helpers.cmd` (from `src/updater/`) on its own. On the designer's
 computer, setup is once: download it (the guide links to `releases/latest/download/Install-FPP-Helpers.cmd`)
