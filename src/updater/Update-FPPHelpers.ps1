@@ -15,6 +15,7 @@ $Title      = 'Update FPP Helpers'
 $KeepIfPresent = @('1 Inch.ai')   # never overwrite the designer's own copy
 
 Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 function Show-Msg([string]$text, [string]$icon = 'Information', [string]$buttons = 'OK') {
     [System.Windows.Forms.MessageBox]::Show($text, $Title,
         [System.Windows.Forms.MessageBoxButtons]::$buttons,
@@ -82,7 +83,9 @@ try {
         Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $zip -Headers $headers -UseBasicParsing
         Unblock-File -LiteralPath $zip
         $unz = Join-Path $tmp 'files'
-        Expand-Archive -LiteralPath $zip -DestinationPath $unz -Force
+        # Not Expand-Archive: started from PowerShell 7, Windows PowerShell can load PS7's Archive
+        # module, which calls a .NET overload that doesn't exist here ("ExtractToDirectory ... 3").
+        [IO.Compression.ZipFile]::ExtractToDirectory($zip, $unz)
         Get-ChildItem -LiteralPath $unz -Recurse -File | Unblock-File
 
         $addin = Join-Path $unz $AddinName
