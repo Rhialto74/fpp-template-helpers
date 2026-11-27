@@ -97,7 +97,12 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
    release; the designer's **Update FPP Helpers** desktop icon (`src/updater/Update-FPPHelpers.ps1`,
    Windows PowerShell 5.1, ASCII only) installs the latest release. Keep the zip's file names stable:
    the updater looks for `FPP-Template-Helpers.zip` and `FPP Template Helpers.dotm`.
-5. Illustrator menu entry: the updater writes a small launcher, `Make FPP Templates.jsx`, into every
+5. Self-update: the running updater is the OLD code, even after it copies the new one over itself.
+   If the copied updater differs from the running one, it starts the new copy with `-Finish` (plus
+   `-PreviousVersion`, `-Install`), which runs `Complete-Install` (after-install steps and closing message)
+   without downloading again. Put new install steps in `Complete-Install`. Updaters older than v1.2.0 don't
+   do this, so moving from those takes a second click for new steps.
+6. Illustrator menu entry: the updater writes a small launcher, `Make FPP Templates.jsx`, into every
    `Program Files\Adobe\Adobe Illustrator*\Presets\<locale>\Scripts` folder. It asks first, then needs one admin prompt.
    The launcher only does `$.evalFile` on `Documents\FPP-Template-Helpers\MakeFPPTemplates.jsx`, so updates
    need no admin rights. It is rewritten only when missing or different. Under `$.evalFile`, `$.fileName` is

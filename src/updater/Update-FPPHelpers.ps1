@@ -8,8 +8,10 @@
 #     written once (again only if missing or changed, e.g. after an Illustrator upgrade).
 # Run with -Install once (from "Set up updates (run once).cmd") to put an
 # "Update FPP Helpers" icon on the desktop. The icon runs this file without -Install.
+# If an update brings a changed updater, this one starts the new copy with -Finish to do the
+# after-install steps (Complete-Install), so new steps work on the first click.
 # Must stay compatible with Windows PowerShell 5.1 (the one built into Windows).
-param([switch]$Install)
+param([switch]$Install, [switch]$Finish, [string]$PreviousVersion = '')
 
 $ErrorActionPreference = 'Stop'
 $Repo       = 'Rhialto74/fpp-template-helpers'
@@ -114,6 +116,21 @@ function Update-IllustratorMenu([string]$helperFolder) {
     return "'Make FPP Templates' could not be added to Illustrator's menu. Use File > Scripts > Other Script... ($HelperName), or run the update again."
 }
 
+# Steps after the files are in place, and the closing message. Done by the NEW updater
+# (via -Finish when an older one did the download), so add new install steps here.
+function Complete-Install([string]$target, [string]$latest, [string]$previous, [bool]$firstInstall) {
+    $menuNote = Update-IllustratorMenu $target
+    $msg = "FPP Template Helpers $latest is installed."
+    if ($previous -and $previous -ne $latest) { $msg = "Updated from $previous to $latest." }
+    if ($firstInstall) { $msg += "`n`nFrom now on, double-click 'Update FPP Helpers' on your desktop to get newer versions." }
+    $msg += "`n`nThe Word helper is ready the next time you open Word."
+    if ($menuNote) { $msg += "`n`n$menuNote" }
+    Show-Msg $msg | Out-Null
+}
+
+# This file's text as it was when it started; the update may overwrite the file while it runs.
+$SelfText = [IO.File]::ReadAllText($PSCommandPath)
+
 try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $target = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'FPP-Template-Helpers'
@@ -121,6 +138,12 @@ try {
     $versionFile = Join-Path $target 'version.txt'
     $installed = ''
     if (Test-Path $versionFile) { $installed = (Get-Content $versionFile -TotalCount 1).Trim() }
+
+    if ($Finish) {
+        # Started by the previous updater right after it installed this version (see below).
+        Complete-Install $target $installed $PreviousVersion $Install
+        exit 0
+    }
 
     # Which version is newest?
     $headers = @{ 'User-Agent' = 'FPP-Helpers-Updater'; 'Accept' = 'application/vnd.github+json' }
@@ -180,13 +203,20 @@ try {
         Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
     }
 
-    $menuNote = Update-IllustratorMenu $target
-    $msg = "FPP Template Helpers $latest is installed."
-    if ($installed -and $installed -ne $latest) { $msg = "Updated from $installed to $latest." }
-    if ($Install) { $msg += "`n`nFrom now on, double-click 'Update FPP Helpers' on your desktop to get newer versions." }
-    $msg += "`n`nThe Word helper is ready the next time you open Word."
-    if ($menuNote) { $msg += "`n`n$menuNote" }
-    Show-Msg $msg | Out-Null
+    # The download may have brought a newer updater (it just replaced this file on disk, but the
+    # old code is what's running). Let the new copy do the after-install steps, so steps added in
+    # a new version happen on the first click.
+    $selfTarget = Join-Path $target 'Update FPP Helpers.ps1'
+    if ((Test-Path -LiteralPath $selfTarget) -and ([IO.File]::ReadAllText($selfTarget) -ne $SelfText)) {
+        $argList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden',
+                     '-File', "`"$selfTarget`"", '-Finish')
+        if ($installed) { $argList += @('-PreviousVersion', $installed) }
+        if ($Install) { $argList += '-Install' }
+        Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe') -ArgumentList $argList
+        exit 0
+    }
+
+    Complete-Install $target $latest $installed $Install
 } catch {
     Show-Msg ("The update didn't finish. Your patterns and section files are not affected; you can try again later.`n`n" +
               "Please send a screenshot of this message to whoever looks after these helpers.`n`n" +
