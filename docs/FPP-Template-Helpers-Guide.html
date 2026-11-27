@@ -102,34 +102,37 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
 
 <div class="wrap">
 <nav class="scroll" aria-label="Sections">
-  <a href="#unzip">Step 0 · Unzip</a><a href="#files">What you need</a><a href="#illustrator">Part 1 · Illustrator</a><a href="#word-setup">Part 2 · Word set-up (once)</a><a href="#word">Part 3 · Word pages</a><a href="#print">Part 4 · Print</a><a href="#help">If something goes wrong</a>
+  <a href="#unzip">Step 0 · Set up</a><a href="#files">What you need</a><a href="#illustrator">Part 1 · Illustrator</a><a href="#word-setup">Part 2 · Word</a><a href="#word">Part 3 · Word pages</a><a href="#print">Part 4 · Print</a><a href="#updates">Getting updates</a><a href="#help">If something goes wrong</a>
 </nav>
 
 <section id="unzip">
-  <h2>Step 0 · Unzip the files to your computer</h2>
-  <p class="lead">Do this once. Illustrator and Word can't use the files while they're still inside the zip.</p>
+  <h2>Step 0 · Set up the helpers (once per computer)</h2>
+  <p class="lead">Do this once. It puts the helpers in their own folder, adds the Word helper to Word, and puts an <b>Update FPP Helpers</b> icon on your desktop for later.</p>
   <ol class="steps">
-    <li>Find <span class="file">FPP-Template-Helpers.zip</span> (for example in your Downloads folder), right-click it and choose <b>Extract All…</b></li>
-    <li>In the window that opens, click <b>Browse…</b>, click <b>Documents</b> on the left, then <b>Select Folder</b>.</li>
-    <li>In the box showing the destination, add <b>\FPP-Template-Helpers</b> to the end, so it reads something like <span class="file">C:\Users\<i>yourname</i>\Documents\FPP-Template-Helpers</span>. Click <b>Extract</b>.</li>
-    <li>A folder window opens showing four files: this guide, <span class="file">MakeFPPTemplates.jsx</span>, <span class="file">AddTemplateSheets.bas</span> and <span class="file">1 Inch.ai</span>. From now on, this guide calls that folder <span class="menu">Documents › FPP-Template-Helpers</span>.
-      <span class="see">Tip: drag that folder onto "Quick access" in the left column of File Explorer so it's always one click away.</span></li>
-    <li>Put your section files (the Group A–D files) in this same folder, next to <span class="file">1 Inch.ai</span>. Keeping everything in one folder on the computer lets the Illustrator helper fill in the section name and find the 1-inch graphic by itself.
+    <li>Close Word if it's open.</li>
+    <li>Go to <span class="file">github.com/Rhialto74/fpp-template-helpers/releases/latest</span> and click <span class="file">FPP-Template-Helpers.zip</span> to download it.</li>
+    <li>Open your Downloads folder, right-click <span class="file">FPP-Template-Helpers.zip</span> and choose <b>Extract All…</b>, then <b>Extract</b>.</li>
+    <li>In the folder that opens, double-click <span class="file">Set up updates (run once)</span>.
+      <span class="see">If Windows shows a blue "Windows protected your PC" box, click <b>More info</b>, then <b>Run anyway</b>.</span></li>
+    <li>A message says the helpers are installed. You now have a folder <span class="menu">Documents › FPP-Template-Helpers</span> and a new <b>Update FPP Helpers</b> icon on your desktop. You can delete the zip and the extracted folder in Downloads.
+      <span class="see">Tip: drag <span class="file">FPP-Template-Helpers</span> onto "Quick access" in the left column of File Explorer so it's always one click away.</span></li>
+    <li>Put your section files (the Group A–D files) in <span class="menu">Documents › FPP-Template-Helpers</span>, next to <span class="file">1 Inch.ai</span>. Keeping everything in one folder on the computer lets the Illustrator helper fill in the section name and find the 1-inch graphic by itself. Updates never change or remove your own files.
       <span class="see">If a section file lives in Adobe's cloud, save a computer copy first: open it in Illustrator, choose <span class="menu">File › Save a Copy…</span>, click <b>Save on your computer</b> if Illustrator offers it, go to <span class="menu">Documents › FPP-Template-Helpers</span>, keep the type as <b>Adobe Illustrator (*.AI)</b>, Save, and click OK in the options window. Then open that copy for Part 1.</span></li>
   </ol>
 </section>
 
 <section id="files">
   <h2>What you need</h2>
-  <p class="lead">After Step 0, these are all in <span class="menu">Documents › FPP-Template-Helpers</span>. You don't need to open or understand the add-on files – you just point Illustrator and Word at them.</p>
+  <p class="lead">After Step 0, these are all in <span class="menu">Documents › FPP-Template-Helpers</span>. You don't need to open or understand the helper files.</p>
   <table class="stack">
     <thead><tr><th>File</th><th>What it is</th></tr></thead>
     <tbody>
       <tr><td data-l="File"><span class="file">MakeFPPTemplates.jsx</span></td><td data-l="What it is">The <b>Illustrator helper</b>. Splits one section into numbered sheets, makes the Left and Right versions, adds the join marks, the sheet numbers and your 1-inch square, and saves them as pictures.</td></tr>
-      <tr><td data-l="File"><span class="file">AddTemplateSheets.bas</span></td><td data-l="What it is">The <b>Word helper</b>. Adds those pictures to the end of your pattern document, one per page, with a title and the exact print size.</td></tr>
+      <tr><td data-l="File">The Word helper</td><td data-l="What it is">Adds those pictures to the end of your pattern document, one per page, with a title and the exact print size. Set-up puts it inside Word for you, so you won't see it in this folder.</td></tr>
+      <tr><td data-l="File"><span class="file">Update FPP Helpers.ps1</span>, <span class="file">version.txt</span>, <span class="file">Set up updates (run once)</span></td><td data-l="What it is">Used by the <b>Update FPP Helpers</b> icon. Leave them alone.</td></tr>
       <tr><td data-l="File"><span class="file">1 Inch.ai</span></td><td data-l="What it is">Your 1-inch scale square. Leave it in the folder with the helpers; the Illustrator helper finds it by itself.</td></tr>
       <tr><td data-l="File">Section files</td><td data-l="What it is">e.g. <span class="file">Group A-Right Image-LABELED.ai</span> – one piecing section per file, with the patch labels typed in. Keep copies in <span class="menu">Documents › FPP-Template-Helpers</span> (not only in Adobe's cloud).</td></tr>
-      <tr><td data-l="File"><span class="file">BRS Pattern Template.docx</span></td><td data-l="What it is">Your Word pattern template (not in the zip – use your own copy).</td></tr>
+      <tr><td data-l="File"><span class="file">BRS Pattern Template.docx</span></td><td data-l="What it is">Your Word pattern template (not part of the helpers – use your own copy).</td></tr>
     </tbody>
   </table>
   <div class="note"><b>Left and Right, in one sentence:</b> foundation paper piecing is sewn from the printed side, so the printed template is a mirror image of the finished front. The Group files show the <b>Right</b> half as it looks on the front, so the helper prints the Right templates mirrored and the Left templates as drawn – and turns your labels back around so they always read normally.</div>
@@ -171,36 +174,17 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
 </section>
 
 <section id="word-setup">
-  <h2>Part 2 · Set up Word (only once per computer)</h2>
-  <p class="lead">Word keeps add-ons like this behind a hidden tab called <b>Developer</b>. You turn it on once, add the Word helper once, and it's there for good.</p>
-
-  <h3>Turn on the Developer tab</h3>
-  <ol class="steps">
-    <li>In Word, click <span class="menu">File</span> (top left), then <span class="menu">Options</span> at the bottom of the left column.</li>
-    <li>Click <span class="menu">Customize Ribbon</span> on the left.</li>
-    <li>In the right-hand list, tick <b>Developer</b>, then click <b>OK</b>.
-      <span class="see">A new "Developer" tab now sits along the top of Word.</span></li>
-  </ol>
-
-  <h3>Add the Word helper</h3>
-  <ol class="steps">
-    <li>Click the <span class="menu">Developer</span> tab, then <span class="menu">Visual Basic</span> at its left end.
-      <span class="see">A plain, old-fashioned looking window opens. Don't worry – you only click two things here.</span></li>
-    <li>In the panel on the left, click the line that says <b>Normal</b>. This stores the helper in Word itself, so it works in every document.</li>
-    <li>Use that window's menu: <span class="menu">File › Import File…</span>, go to <span class="menu">Documents › FPP-Template-Helpers</span>, pick <span class="file">AddTemplateSheets.bas</span>, and click <b>Open</b>.
-      <span class="see">Under Normal you'll now see a "Modules" folder containing "FPPSheets". That's it.</span></li>
-    <li>Close that window with the <b>X</b> in its top-right corner. You're back in Word.</li>
-  </ol>
-  <div class="note"><b>If Word later says macros are disabled:</b> <span class="menu">File › Options › Trust Center › Trust Center Settings… › Macro Settings</span>, choose <b>"Disable VBA macros with notification"</b> (or similar wording), OK. When a yellow bar asks, click <b>Enable Content</b>.</div>
-  <div class="note"><b>Getting a newer version of the helper?</b> Open <span class="menu">Developer › Visual Basic</span>, right-click <b>FPPSheets</b> on the left, choose <b>Remove FPPSheets</b> (answer <b>No</b> to exporting), then import the new file as above.</div>
+  <h2>Part 2 · Word</h2>
+  <p class="lead">Nothing to do: Step 0 added the Word helper to Word, and Word loads it by itself every time it starts. You'll find it under <span class="menu">View › Macros</span> as <b>AddTemplateSheets</b>.</p>
+  <div class="note"><b>If Word says macros are disabled:</b> <span class="menu">File › Options › Trust Center › Trust Center Settings… › Macro Settings</span>, choose <b>"Disable VBA macros with notification"</b> (or similar wording), OK, and restart Word.</div>
+  <div class="note"><b>Used an older version that you added through Developer › Visual Basic?</b> Remove that copy once, so Word doesn't list the helper twice: <span class="menu">Developer › Visual Basic</span>, under <b>Normal › Modules</b> right-click <b>FPPSheets</b>, choose <b>Remove FPPSheets</b> (answer <b>No</b> to exporting), and close that window.</div>
 </section>
 
 <section id="word">
   <h2>Part 3 · Put the sheets into the pattern</h2>
   <ol class="steps">
     <li>Open <span class="file">BRS Pattern Template.docx</span> and <b>straight away</b> use <span class="menu">File › Save As</span> to save it under the pattern's name (e.g. "Deco Pattern.docx"). This keeps the template clean.</li>
-    <li>Click the <span class="menu">View</span> tab, then <span class="menu">Macros</span> (far right) › <span class="menu">View Macros</span>.
-      <span class="see">You can also use <span class="menu">Developer › Macros</span>.</span></li>
+    <li>Click the <span class="menu">View</span> tab, then <span class="menu">Macros</span> (far right) › <span class="menu">View Macros</span>.</li>
     <li>Click <b>AddTemplateSheets</b> in the list, then <b>Run</b>.</li>
     <li>Go to <span class="menu">Documents › FPP-Template-Helpers</span>, click the <span class="file">Pattern-Sheets</span> folder itself (not one of the folders inside it) and click OK.
       <span class="see">You can also pick just one folder, such as "Group A - Left", to add only that.</span></li>
@@ -222,6 +206,16 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
   </ol>
 </section>
 
+<section id="updates">
+  <h2>Getting updates</h2>
+  <ol class="steps">
+    <li>Save your work and close Word.</li>
+    <li>Double-click <b>Update FPP Helpers</b> on your desktop.</li>
+    <li>A message says either that you already have the newest version, or which version was installed. That's it – the next time you open Illustrator and Word they use the new version.
+      <span class="see">If it asks you to close Word, do that and click OK. Your section files, <span class="file">Pattern-Sheets</span> and your <span class="file">1 Inch.ai</span> are never changed.</span></li>
+  </ol>
+</section>
+
 <section id="help">
   <h2>If something goes wrong</h2>
   <table class="stack">
@@ -230,7 +224,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
       <tr><td data-l="You see">The assembly map shape has an odd spike, or there are more sheets than expected</td><td data-l="Do this">Something stray was selected. Close the untitled document, delete the stray item in the section file (or run Clean Up), select all again and rerun.</td></tr>
       <tr><td data-l="You see">Section name is blank or strange, or the 1-inch path is empty</td><td data-l="Do this">The file was opened from Adobe's cloud. Type the name in yourself and use Browse for <span class="file">1 Inch.ai</span> – or better, save a computer copy as in Step 0 and use that.</td></tr>
       <tr><td data-l="You see">Labels read backwards on one side</td><td data-l="Do this">Those labels were turned into outlines. Retype them with the Type tool as normal text and rerun.</td></tr>
-      <tr><td data-l="You see">"AddTemplateSheets" isn't in the Macros list</td><td data-l="Do this">The Word helper wasn't added, or was added to a document instead of <b>Normal</b>. Repeat Part 2.</td></tr>
+      <tr><td data-l="You see">"AddTemplateSheets" isn't in the Macros list</td><td data-l="Do this">Close Word, double-click <b>Update FPP Helpers</b> on your desktop, then open Word again. If it's still missing, check the macro setting in Part 2.</td></tr>
       <tr><td data-l="You see">"No sheets were found there"</td><td data-l="Do this">You picked the wrong folder. Pick <span class="file">Pattern-Sheets</span>, or one of the "… - Left/Right" folders inside it.</td></tr>
       <tr><td data-l="You see">A warning that pictures were stretched</td><td data-l="Do this">A sheet picture was edited or swapped. Rerun the Illustrator helper for that section and add the pages again.</td></tr>
       <tr><td data-l="You see">Printed 1-inch square isn't 1 inch</td><td data-l="Do this">Something is scaling the print. Check Part 4, especially Printer Properties.</td></tr>
@@ -239,7 +233,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
   </table>
 </section>
 
-<footer>Guide for MakeFPPTemplates.jsx (Illustrator) and AddTemplateSheets.bas (Word). Keep this page in Documents › FPP-Template-Helpers with them.</footer>
+<footer>Guide for the FPP Template Helpers for Illustrator and Word. A copy is kept in Documents › FPP-Template-Helpers.</footer>
 </div>
 </body>
 </html>

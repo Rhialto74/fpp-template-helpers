@@ -25,7 +25,10 @@ src/word/legacy/BuildTileDocument.bas     earlier version (plain Letter document
 docs/FPP-Template-Helpers-Guide.html      end-user guide (ships in the zip as "Start here - ...")
 assets/1 Inch.ai                          the designer's 1-inch scale graphic
 tests/                                    Node tests for the geometry + ExtendScript compatibility
+src/updater/                              "Update FPP Helpers" updater + one-time setup .cmd
+scripts/build-word-addin.ps1              builds the Word add-in (.dotm) from the .bas (needs Word)
 scripts/build-release.ps1                 builds dist/FPP-Template-Helpers.zip
+scripts/release.ps1                       tests, builds, tags and publishes a GitHub release
 ```
 
 ## Develop
@@ -37,8 +40,16 @@ scripts/build-release.ps1                 builds dist/FPP-Template-Helpers.zip
 ## Release
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1
+powershell -ExecutionPolicy Bypass -File scriptselease.ps1 -Version 1.2.0 -Notes "What changed" -TemporarilyTrustVba
 ```
 
-Produces `dist\FPP-Template-Helpers.zip` containing the guide, both helpers and `1 Inch.ai`, flat,
-so "Extract All" into `Documents\FPP-Template-Helpers` matches the guide.
+Run on a Windows PC with Word, from a clean, pushed `main`. It runs the tests, builds
+`dist\FPP-Template-Helpers.zip` (guide, Illustrator helper, Word add-in `FPP Template Helpers.dotm`,
+`1 Inch.ai`, updater, `version.txt`), tags `v1.2.0` and creates a GitHub release with the zip.
+`-TemporarilyTrustVba` switches Word's "Trust access to the VBA project object model" on only while
+the add-in is built, then restores it.
+
+On the designer's computer, setup is once: download the zip from the latest release, extract it and
+double-click `Set up updates (run once).cmd`. That installs into `Documents\FPP-Template-Helpers`,
+copies the add-in into Word's Startup folder (Word loads it on start) and creates an
+**Update FPP Helpers** desktop icon, which fetches the latest release whenever she clicks it.

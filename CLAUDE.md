@@ -75,8 +75,11 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
 
 ## Word helper notes
 
-- Imported once into the **Normal** project (Developer › Visual Basic › File › Import File), run from
-  View › Macros. Appends pages to the END of the active document; reads only `sheets.txt` + PNGs.
+- Shipped as a Word add-in, `FPP Template Helpers.dotm`, built from the `.bas` by
+  `scripts/build-word-addin.ps1` (Word COM; needs AccessVBOM, which `-TemporarilyTrustVba` flips
+  on and restores). The updater copies it into Word's Startup folder, so Word loads it on start and
+  updates need no re-import. Run from View › Macros. Appends pages to the END of the active
+  document; reads only `sheets.txt` + PNGs.
 - Pictures are floating shapes positioned relative to the PAGE (centred, bottom 0.95 in above the
   page edge, wrap behind text) so the template's header/footer and margins don't matter.
 - Don't call `Dir()` inside a `Dir()` loop – it restarts the listing. Collect names first.
@@ -89,7 +92,10 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
 2. Real check: run the Illustrator helper on a section file (Ctrl+A first), inspect the PNGs and maps
    (Left = as drawn, Right = mirrored, labels readable, straight map outline, 1-inch box present).
 3. Run the Word helper on a COPY of the pattern document; check pictures sit between header and footer.
-4. Rebuild the zip with `scripts/build-release.ps1` when shipping to the designer's computer.
+4. Ship with `scripts/release.ps1 -Version x.y.z -TemporarilyTrustVba` (needs Word). It publishes a GitHub
+   release; the designer's **Update FPP Helpers** desktop icon (`src/updater/Update-FPPHelpers.ps1`,
+   Windows PowerShell 5.1, ASCII only) installs the latest release. Keep the zip's file names stable:
+   the updater looks for `FPP-Template-Helpers.zip` and `FPP Template Helpers.dotm`.
 
 ## Not in this repo
 
