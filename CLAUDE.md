@@ -104,6 +104,10 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
   is the backstop: the build retries up to 3 times, release.ps1 checks the final zip before publishing, and the updater won't remove the
   old Normal copy while the installed add-in fails the same check. `tests/word-addin.test.js` runs these
   checks on real good/broken add-ins in `tests/fixtures/`.
+- v1.5.0's updater could leave its hidden Word (`WINWORD.EXE -Embedding`) running after removing the old Normal
+  copy; the next update then asked her to close a Word she couldn't see. Now `Remove-OldWordMacros` notes the PID it
+  started and ends only that one if it won't quit, and the pre-install wait offers to close Word when no Word process
+  has a window (`Test-OnlyHiddenWord`). `tests/updater-word.test.js`.
 - A Word started by a script doesn't load Normal's macros (`NormalTemplate.VBProject` looks empty), so the
   updater opens Normal.dotm with `Documents.Open` to remove old modules.
 

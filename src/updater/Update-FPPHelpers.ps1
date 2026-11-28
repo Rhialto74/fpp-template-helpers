@@ -247,6 +247,21 @@ function Test-AddinHasMacros {
     }
 }
 
+# The Word processes with these ids that are still running.
+function Get-OurWord([int[]]$ids) {
+    if (-not $ids -or $ids.Count -eq 0) { return ,@() }
+    return ,@(Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Where-Object { $ids -contains $_.Id })
+}
+
+# True when Word is running but none of it has a window: a Word left behind in the background
+# (e.g. by an older updater). There is nothing she could close, and no document is open in it.
+function Test-OnlyHiddenWord([object[]]$procs) {
+    $procs = @($procs | Where-Object { $_ })
+    if ($procs.Count -eq 0) { return $false }
+    foreach ($p in $procs) { if ($p.MainWindowHandle -ne [IntPtr]::Zero) { return $false } }
+    return $true
+}
+
 # Returns a sentence for the closing message, or ''. Needs Word closed (the caller makes sure).
 function Remove-OldWordMacros([string]$helperFolder) {
     $normal = Get-NormalTemplatePath
@@ -274,10 +289,15 @@ function Remove-OldWordMacros([string]$helperFolder) {
     $old = $null
     if ($hadKey) { $old = (Get-ItemProperty -Path $secKey -Name AccessVBOM -ErrorAction SilentlyContinue).AccessVBOM }
     $word = $null; $err = ''
+    # Note which Word this starts, so it can be ended if it won't quit (v1.5.0 and earlier could leave
+    # a hidden Word running for hours, and the next update then waited for a Word nobody could see).
+    $before = @(Get-Process -Name WINWORD -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
+    $ours = @()
     try {
         if (-not $hadKey) { New-Item -Path $secKey -Force | Out-Null }
         Set-ItemProperty -Path $secKey -Name AccessVBOM -Value 1 -Type DWord
         $word = New-Object -ComObject Word.Application
+        $ours = @(Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Where-Object { $before -notcontains $_.Id } | ForEach-Object { $_.Id })
         $word.Visible = $false
         $word.DisplayAlerts = 0
         # Open Normal.dotm itself: a Word started from a script doesn't load Normal's macros, so
@@ -295,13 +315,17 @@ function Remove-OldWordMacros([string]$helperFolder) {
         if ($left.Count -gt 0) { $err = 'still there: ' + ($left -join ', ') }
     } catch { $err = $_.Exception.Message } finally {
         if ($word) {
+            # Normal.dotm was opened as a document; tell Word it's saved so Quit can't stop on a hidden question.
+            try { $word.NormalTemplate.Saved = $true } catch { }
             try { $word.Quit() } catch { }
             [void][Runtime.InteropServices.Marshal]::ReleaseComObject($word)
             $word = $null
             [GC]::Collect(); [GC]::WaitForPendingFinalizers()
         }
         $deadline = (Get-Date).AddSeconds(30)
-        while ((Get-Process -Name WINWORD -ErrorAction SilentlyContinue) -and ((Get-Date) -lt $deadline)) { Start-Sleep -Milliseconds 500 }
+        while ((Get-OurWord $ours).Count -gt 0 -and ((Get-Date) -lt $deadline)) { Start-Sleep -Milliseconds 500 }
+        # Still there: it's stuck. End only the Word this started; its work was saved above.
+        foreach ($p in (Get-OurWord $ours)) { try { Stop-Process -Id $p.Id -Force } catch { } }
         if ($null -eq $old) { Remove-ItemProperty -Path $secKey -Name AccessVBOM -ErrorAction SilentlyContinue }
         else { Set-ItemProperty -Path $secKey -Name AccessVBOM -Value $old -Type DWord }
     }
@@ -380,7 +404,15 @@ try {
     }
 
     # Word keeps the add-in file locked while it's open.
-    while (Get-Process -Name WINWORD -ErrorAction SilentlyContinue) {
+    while ($procs = @(Get-Process -Name WINWORD -ErrorAction SilentlyContinue)) {
+        if (Test-OnlyHiddenWord $procs) {
+            $answer = Show-Msg ("Word is running in the background with no window open, so there's nothing to save.`n`n" +
+                "Click OK to close it and carry on with the update.`n(Click Cancel to update another time.)") 'Information' 'OKCancel'
+            if ($answer -ne 'OK') { exit 0 }
+            foreach ($p in $procs) { try { Stop-Process -Id $p.Id -Force } catch { } }
+            Start-Sleep -Seconds 2
+            continue
+        }
         $answer = Show-Msg "Please save your work and close Word, then click OK.`n`n(Click Cancel to update another time.)" 'Warning' 'OKCancel'
         if ($answer -ne 'OK') { exit 0 }
     }
