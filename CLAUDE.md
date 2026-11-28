@@ -10,6 +10,7 @@ template. Sections are often larger than a printable page, so they must be split
 sheets that the quilter prints at true size, trims, tapes together and then cuts out.
 
 - `src/illustrator/MakeFPPTemplates.jsx` – the Illustrator helper (ExtendScript).
+- `src/illustrator/AddFabricSwatches.jsx` – second Illustrator helper: folder of fabric pictures -> pattern swatches.
 - `src/word/AddTemplateSheets.bas` – the Word helper (VBA module named `FPPSheets`).
 - `docs/FPP-Template-Helpers-Guide.html` – the end-user guide, published by GitHub Pages (main, `/docs`)
   at https://rhialto74.github.io/fpp-template-helpers/FPP-Template-Helpers-Guide.html
@@ -81,6 +82,19 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
 - Illustrator turns spaces in export file names into hyphens – keep exported names space-free.
 - Script errors show "Line N" – the line in the .jsx file; ask for a screenshot of the dialog.
 
+## Fabric swatch helper (AddFabricSwatches.jsx)
+
+- Scripting can't put art into a pattern: `doc.patterns.add()` is empty and `duplicate(pattern)` fails with
+  Error 1266. What works: place + embed the picture, select it, `executeMenuCommand("Adobe Make Pattern")`,
+  then `executeMenuCommand("exitFocus")` to leave pattern editing mode, find the new pattern by name diff, rename.
+- Make Pattern shows a modal "new pattern has been added" notice that blocks the script; set
+  `app.userInteractionLevel = DONTDISPLAYALERTS` around the loop and restore it in `finally`.
+- Unknown menu command names throw `'BKey'`. Work happens on a temporary layer (her layers may be locked/hidden).
+- Pure helpers (PURE-START..PURE-END) are exposed as `$FABRIC` outside Illustrator; `tests/fabric-swatches.test.js`.
+- Settings: `%APPDATA%\FPP-Template-Helpers\fabric-swatches.txt` (key=value lines: folder, sizeMode, width).
+- The updater's `$MenuEntries` lists every Illustrator helper and its File › Scripts launcher; add new helpers there
+  and in `build-release.ps1`.
+
 ## Word helper notes
 
 - If a working copy of the add-in is loaded (it's in Word's Startup folder) while building, Word saves the
@@ -133,9 +147,10 @@ how `tests/geometry.test.js` runs it in Node. Keep it that way.
    `-PreviousVersion`, `-Install`), which runs `Complete-Install` (after-install steps and closing message)
    without downloading again. Put new install steps in `Complete-Install`. Updaters older than v1.2.0 don't
    do this, so moving from those takes a second click for new steps.
-7. Illustrator menu entry: the updater writes a small launcher, `Make FPP Templates.jsx`, into every
+7. Illustrator menu entries: the updater writes a small launcher per helper (`$MenuEntries`: `Make FPP Templates.jsx`,
+   `Add Fabric Swatches.jsx`) into every
    `Program Files\Adobe\Adobe Illustrator*\Presets\<locale>\Scripts` folder. It asks first, then needs one admin prompt.
-   The launcher only does `$.evalFile` on `Documents\FPP-Template-Helpers\MakeFPPTemplates.jsx`, so updates
+   A launcher only does `$.evalFile` on its helper in `Documents\FPP-Template-Helpers`, so updates
    need no admin rights. It is rewritten only when missing or different. Under `$.evalFile`, `$.fileName` is
    the helper's own path (checked), so the 1-inch "next to the helper" lookup still works.
 

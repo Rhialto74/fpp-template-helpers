@@ -1,6 +1,6 @@
 # FPP Template Helpers
 
-Two small add-ons that turn a foundation paper piecing (FPP) section drawn in Adobe Illustrator
+Small add-ons for a quilt pattern designer. The main two turn a foundation paper piecing (FPP) section drawn in Adobe Illustrator
 into printable, true-scale template pages inside a Word pattern document.
 
 1. **`src/illustrator/MakeFPPTemplates.jsx`** (Illustrator script)
@@ -11,6 +11,9 @@ into printable, true-scale template pages inside a Word pattern document.
 2. **`src/word/AddTemplateSheets.bas`** (Word VBA macro)
    Appends those sheets to the open pattern document, one per page: a title in the pattern's
    heading style, a print note, and the picture placed on the page at its exact size.
+3. **`src/illustrator/AddFabricSwatches.jsx`** (Illustrator script)
+   Turns a folder of fabric pictures (JPG/PNG/TIF) into pattern swatches in the open document, one per
+   picture, named after the file, optionally scaled to a set tile width. Names already in use are skipped.
 
 End-user instructions (for someone who has never used a script):
 **[read the guide](https://rhialto74.github.io/fpp-template-helpers/FPP-Template-Helpers-Guide.html)**
@@ -20,6 +23,7 @@ End-user instructions (for someone who has never used a script):
 
 ```
 src/illustrator/MakeFPPTemplates.jsx      current Illustrator helper
+src/illustrator/AddFabricSwatches.jsx     fabric pictures -> pattern swatches
 src/illustrator/legacy/                   earlier versions (plain grid tiling; single side)
 src/word/AddTemplateSheets.bas            current Word helper
 src/word/legacy/BuildTileDocument.bas     earlier version (plain Letter document)
@@ -46,7 +50,7 @@ It needs a Windows PC with Word, a clean `main`, and the GitHub account that can
 (`git` and `gh auth login`). It shows the next version (last release + 0.1.0) and notes made from the
 commit subjects since the last release, and waits: Enter releases, typing a version (e.g. `1.3.1`)
 changes it, `N` stops. Then it pushes `main` if needed, runs the tests, builds
-`dist\FPP-Template-Helpers.zip` (guide, Illustrator helper, Word add-in `FPP Template Helpers.dotm`,
+`dist\FPP-Template-Helpers.zip` (guide, both Illustrator helpers, Word add-in `FPP Template Helpers.dotm`,
 `1 Inch.ai`, updater, `version.txt`), tags the version and creates a GitHub release with the zip and
 `Install-FPP-Helpers.cmd`. Word's "Trust access to the VBA project object model" is switched on only
 while the add-in is built, then restored.

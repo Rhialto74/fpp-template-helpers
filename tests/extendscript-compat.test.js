@@ -6,7 +6,7 @@ const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
 
-const files = ['src/illustrator/MakeFPPTemplates.jsx',
+const files = ['src/illustrator/MakeFPPTemplates.jsx', 'src/illustrator/AddFabricSwatches.jsx',
   'src/illustrator/legacy/SplitSectionForPrinting.jsx',
   'src/illustrator/legacy/TileToArtboards.jsx'].map(f => path.join(__dirname, '..', f));
 

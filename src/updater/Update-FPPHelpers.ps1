@@ -2,10 +2,10 @@
 # Downloads the newest release of the FPP Template Helpers from GitHub and installs it:
 #   - helper files, guide and updater  -> Documents\FPP-Template-Helpers
 #   - Word add-in (.dotm)               -> Word's Startup folder (Word loads it by itself)
-#   - "Make FPP Templates.jsx" launcher -> each Illustrator's Presets\<locale>\Scripts folder, so the
-#     helper is under File > Scripts. That folder is in Program Files, so this asks first and then
-#     needs one Windows admin prompt. The launcher only runs the helper from Documents, so it is
-#     written once (again only if missing or changed, e.g. after an Illustrator upgrade).
+#   - a small launcher per Illustrator helper ("Make FPP Templates.jsx", "Add Fabric Swatches.jsx")
+#     -> each Illustrator's Presets\<locale>\Scripts folder, so the helpers are under File > Scripts.
+#     That folder is in Program Files, so this asks first and then needs one Windows admin prompt.
+#     A launcher only runs its helper from Documents, so it is written once (again only if missing or changed, e.g. after an Illustrator upgrade).
 # Run with -Install once (from "Set up updates (run once).cmd") to put an
 # "Update FPP Helpers" icon on the desktop. The icon runs this file without -Install.
 # If an update brings a changed updater, this one starts the new copy with -Finish to do the
@@ -20,8 +20,11 @@ $AssetName  = 'FPP-Template-Helpers.zip'
 $AddinName  = 'FPP Template Helpers.dotm'
 $Title      = 'Update FPP Helpers'
 $KeepIfPresent = @('1 Inch.ai')   # never overwrite the designer's own copy
-$HelperName = 'MakeFPPTemplates.jsx'
-$MenuName   = 'Make FPP Templates.jsx'   # shows in Illustrator as File > Scripts > Make FPP Templates
+# Illustrator helpers and their File > Scripts menu entries (launcher file name = menu text + .jsx).
+$MenuEntries = @(
+    @{ Helper = 'MakeFPPTemplates.jsx';  Menu = 'Make FPP Templates' },
+    @{ Helper = 'AddFabricSwatches.jsx'; Menu = 'Add Fabric Swatches' }
+)
 # Settings shared with the Illustrator and Word helpers: one-line UTF-8 files (no BOM).
 $SettingsDir   = Join-Path $env:APPDATA 'FPP-Template-Helpers'
 $OutputSetting = Join-Path $SettingsDir 'output-folder.txt'
@@ -139,45 +142,60 @@ function Get-MenuLauncherText([string]$helperPath) {
     ) -join "`r`n") + "`r`n"
 }
 
-function Test-MenuLauncher([string]$folder, [string]$text) {
-    $f = Join-Path $folder $MenuName
-    if (-not (Test-Path -LiteralPath $f)) { return $false }
-    return ([IO.File]::ReadAllText($f) -eq $text)
+function Test-MenuLauncher([string]$file, [string]$text) {
+    if (-not (Test-Path -LiteralPath $file)) { return $false }
+    return ([IO.File]::ReadAllText($file) -eq $text)
+}
+
+# Every launcher that is missing or out of date: @{ File = full path; Text = launcher text }.
+function Get-MissingLaunchers([string]$helperFolder, [string[]]$folders) {
+    $need = @()
+    foreach ($folder in $folders) {
+        foreach ($m in $MenuEntries) {
+            $file = Join-Path $folder ($m.Menu + '.jsx')
+            $text = Get-MenuLauncherText (Join-Path $helperFolder $m.Helper)
+            if (-not (Test-MenuLauncher $file $text)) { $need += @{ File = $file; Text = $text } }
+        }
+    }
+    return ,$need
 }
 
 # Returns a sentence for the closing message ('' when nothing was needed or Illustrator isn't installed).
 function Update-IllustratorMenu([string]$helperFolder) {
     $folders = Get-IllustratorScriptFolders
     if ($folders.Count -eq 0) { return '' }
-    $text = Get-MenuLauncherText (Join-Path $helperFolder $HelperName)
-    $need = @($folders | Where-Object { -not (Test-MenuLauncher $_ $text) })
+    $need = Get-MissingLaunchers $helperFolder $folders
     if ($need.Count -eq 0) { return '' }
+    $names = (@($MenuEntries | ForEach-Object { "'" + $_.Menu + "'" }) -join ' and ')
 
-    $answer = Show-Msg ("Put 'Make FPP Templates' in Illustrator's File > Scripts menu?`n`n" +
+    $answer = Show-Msg ("Put $names in Illustrator's File > Scripts menu?`n`n" +
         "Windows will then ask for permission, because Illustrator keeps that menu in Program Files. " +
-        "This is needed only once.") 'Question' 'YesNo'
-    if ($answer -ne 'Yes') { return "The Illustrator helper is under File > Scripts > Other Script... ($HelperName)." }
+        "This is needed only once, and again when a new helper is added.") 'Question' 'YesNo'
+    if ($answer -ne 'Yes') { return "The Illustrator helpers are under File > Scripts > Other Script... (in Documents\FPP-Template-Helpers)." }
 
-    $tmpFile = Join-Path $env:TEMP ('FPPMenu-' + [guid]::NewGuid().ToString('N') + '.jsx')
-    [IO.File]::WriteAllText($tmpFile, $text, (New-Object Text.UTF8Encoding($true)))
+    $tmpFiles = @()
     try {
-        $cmds = @($need | ForEach-Object {
-            "Copy-Item -LiteralPath '{0}' -Destination '{1}' -Force" -f ($tmpFile -replace "'", "''"), ((Join-Path $_ $MenuName) -replace "'", "''")
-        })
+        $cmds = @()
+        foreach ($n in $need) {
+            $tmp = Join-Path $env:TEMP ('FPPMenu-' + [guid]::NewGuid().ToString('N') + '.jsx')
+            [IO.File]::WriteAllText($tmp, $n.Text, (New-Object Text.UTF8Encoding($true)))
+            $tmpFiles += $tmp
+            $cmds += "Copy-Item -LiteralPath '{0}' -Destination '{1}' -Force" -f ($tmp -replace "'", "''"), ($n.File -replace "'", "''")
+        }
         $enc = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmds -join '; '))
         $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
         try {
             Start-Process -FilePath $ps -Verb RunAs -Wait -WindowStyle Hidden -ArgumentList @('-NoProfile', '-EncodedCommand', $enc)
         } catch { }   # the permission prompt was declined
     } finally {
-        Remove-Item -LiteralPath $tmpFile -Force -ErrorAction SilentlyContinue
+        foreach ($t in $tmpFiles) { Remove-Item -LiteralPath $t -Force -ErrorAction SilentlyContinue }
     }
 
-    $missing = @($need | Where-Object { -not (Test-MenuLauncher $_ $text) })
+    $missing = Get-MissingLaunchers $helperFolder $folders
     if ($missing.Count -eq 0) {
-        return "Illustrator: restart it, then use File > Scripts > Make FPP Templates."
+        return "Illustrator: restart it, then use File > Scripts > " + (@($MenuEntries | ForEach-Object { $_.Menu }) -join ' or ') + "."
     }
-    return "'Make FPP Templates' could not be added to Illustrator's menu. Use File > Scripts > Other Script... ($HelperName), or run the update again."
+    return "The helpers could not be added to Illustrator's menu. Use File > Scripts > Other Script... (in Documents\FPP-Template-Helpers), or run the update again."
 }
 
 # ---------- old Word macros in Normal.dotm ----------

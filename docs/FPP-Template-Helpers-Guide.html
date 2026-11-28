@@ -103,20 +103,20 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
 
 <div class="wrap">
 <nav class="scroll" aria-label="Sections">
-  <a href="#unzip">Step 0 · Set up</a><a href="#files">What you need</a><a href="#illustrator">Part 1 · Illustrator</a><a href="#word-setup">Part 2 · Word</a><a href="#word">Part 3 · Word pages</a><a href="#print">Part 4 · Print</a><a href="#updates">Getting updates</a><a href="#help">If something goes wrong</a>
+  <a href="#unzip">Step 0 · Set up</a><a href="#files">What you need</a><a href="#illustrator">Part 1 · Illustrator</a><a href="#word-setup">Part 2 · Word</a><a href="#word">Part 3 · Word pages</a><a href="#print">Part 4 · Print</a><a href="#fabric">Fabric swatches</a><a href="#updates">Getting updates</a><a href="#help">If something goes wrong</a>
 </nav>
 
 <section id="unzip">
   <h2>Step 0 · Set up the helpers (once per computer)</h2>
-  <p class="lead">Do this once. It puts the helpers in their own folder, adds the Word helper to Word, adds the Illustrator helper to Illustrator's menu, asks where your template sheets should go, and puts two icons on your desktop for later: <b>Update FPP Helpers</b> and <b>Update Output Folder</b>.</p>
+  <p class="lead">Do this once. It puts the helpers in their own folder, adds the Word helper to Word, adds the Illustrator helpers to Illustrator's menu, asks where your template sheets should go, and puts two icons on your desktop for later: <b>Update FPP Helpers</b> and <b>Update Output Folder</b>.</p>
   <ol class="steps">
     <li>Close Word and Illustrator if they're open.</li>
     <li><a href="https://github.com/Rhialto74/fpp-template-helpers/releases/latest/download/Install-FPP-Helpers.cmd">Download the installer</a> (<span class="file">Install-FPP-Helpers.cmd</span>).
       <span class="see">If your browser warns that this type of file can harm your device, choose <b>Keep</b> (in Edge: click <b>…</b> next to the warning, then <b>Keep</b>, then <b>Keep anyway</b>).</span></li>
     <li>Open your Downloads folder and double-click <span class="file">Install-FPP-Helpers</span>.
       <span class="see">If a box says "The publisher could not be verified", click <b>Run</b>. If Windows shows a blue "Windows protected your PC" box, click <b>More info</b>, then <b>Run anyway</b>. You may see one, both or neither. A black window says it's downloading; leave it open – it closes by itself.</span></li>
-    <li>It asks whether to put <b>Make FPP Templates</b> in Illustrator's <span class="menu">File › Scripts</span> menu. Click <b>Yes</b>, then <b>Yes</b> again when Windows asks for permission.
-      <span class="see">This is needed only once. If you click No, you can still open the helper with <span class="menu">File › Scripts › Other Script…</span>, and the next update asks again.</span></li>
+    <li>It asks whether to put <b>Make FPP Templates</b> and <b>Add Fabric Swatches</b> in Illustrator's <span class="menu">File › Scripts</span> menu. Click <b>Yes</b>, then <b>Yes</b> again when Windows asks for permission.
+      <span class="see">This is needed only once (and again when a new helper is added). If you click No, you can still open the helpers with <span class="menu">File › Scripts › Other Script…</span>, and the next update asks again.</span></li>
     <li>A window asks you to <b>choose the folder for your template sheets</b>. It starts at <span class="menu">Documents › FPP-Template-Helpers › Pattern-Sheets</span>; click <b>OK</b> to use that, or pick another folder first.
       <span class="see">The Illustrator helper saves sheets there every time, and the Word helper opens that folder when it asks for the sheets. To change it later, double-click <b>Update Output Folder</b> on your desktop.</span></li>
     <li>A message says the helpers are installed. You now have a folder <span class="menu">Documents › FPP-Template-Helpers</span> and two new icons on your desktop: <b>Update FPP Helpers</b> and <b>Update Output Folder</b>. You can delete <span class="file">Install-FPP-Helpers</span> from Downloads.
@@ -133,6 +133,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
     <thead><tr><th>File</th><th>What it is</th></tr></thead>
     <tbody>
       <tr><td data-l="File"><span class="file">MakeFPPTemplates.jsx</span></td><td data-l="What it is">The <b>Illustrator helper</b>. Splits one section into numbered sheets, makes the Left and Right versions, adds the join marks, the sheet numbers and your 1-inch square, and saves them as pictures.</td></tr>
+      <tr><td data-l="File"><span class="file">AddFabricSwatches.jsx</span></td><td data-l="What it is">The <b>fabric swatch helper</b> for Illustrator. Turns a folder of fabric pictures into swatches (see <a href="#fabric">Fabric swatches</a>).</td></tr>
       <tr><td data-l="File">The Word helper</td><td data-l="What it is">Adds those pictures to the end of your pattern document, one per page, with a title and the exact print size. Set-up puts it inside Word for you, so you won't see it in this folder.</td></tr>
       <tr><td data-l="File"><span class="file">Update FPP Helpers.ps1</span>, <span class="file">version.txt</span>, <span class="file">Set up updates (run once)</span></td><td data-l="What it is">Used by the <b>Update FPP Helpers</b> icon. Leave them alone.</td></tr>
       <tr><td data-l="File"><span class="file">1 Inch.ai</span></td><td data-l="What it is">Your 1-inch scale square. Leave it in the folder with the helpers; the Illustrator helper finds it by itself.</td></tr>
@@ -212,6 +213,27 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
   </ol>
 </section>
 
+<section id="fabric">
+  <h2>Fabric swatches in Illustrator</h2>
+  <p class="lead">Turns a folder of fabric pictures into swatches in one go, so you can fill shapes with real fabrics. Each picture becomes one swatch named after the picture: <span class="file">Kona Red 1308.jpg</span> becomes the swatch "Kona Red 1308".</p>
+  <ol class="steps">
+    <li>Put the fabric pictures (JPG, PNG or TIF) together in one folder. Name each picture the way you want its swatch named.</li>
+    <li>In Illustrator, open the document that should get the swatches (or have no document open, and the helper starts a new one).</li>
+    <li>Go to <span class="menu">File › Scripts › Add Fabric Swatches</span>.
+      <span class="see">Not in the menu? Run <b>Update FPP Helpers</b> and say Yes to the menu question, or use <span class="menu">File › Scripts › Other Script…</span> and open <span class="file">AddFabricSwatches.jsx</span> in <span class="menu">Documents › FPP-Template-Helpers</span>.</span></li>
+    <li>Check the window:
+      <ul>
+        <li><b>Folder of fabric pictures</b> – click <b>Browse…</b> and pick the folder. Below it you see how many pictures were found. The folder is remembered for next time.</li>
+        <li><b>Size of each fabric tile</b> – <b>Keep each picture's own size</b>, or <b>Make each tile … inches wide</b> so every fabric repeats at the size you type (the height follows the picture's shape).</li>
+      </ul>
+      Click <b>Add swatches</b>.</li>
+    <li>A small window shows the progress. When it's done, a message says how many swatches were added. Pictures whose name is already a swatch in this document are skipped and listed, so running it again on the same folder adds only the new ones.</li>
+    <li>Select a shape and click a fabric swatch in the <span class="menu">Swatches</span> panel to fill it.</li>
+  </ol>
+  <div class="note"><b>Swatches belong to the document.</b> To use the same fabrics in other files, either run the helper there too, or in the <span class="menu">Swatches</span> panel menu (☰) choose <span class="menu">Save Swatch Library as AI…</span> and later open it with <span class="menu">Open Swatch Library › User Defined</span>.</div>
+  <div class="note"><b>Fabric too big or too small in a shape?</b> Run the helper again in a new document with a different tile width, or scale just the fabric: <span class="menu">Object › Transform › Scale…</span>, tick only <b>Transform Patterns</b>.</div>
+</section>
+
 <section id="updates">
   <h2>Getting updates</h2>
   <ol class="steps">
@@ -235,6 +257,7 @@ footer{color:var(--soft);font-size:14px;padding:20px 0 40px}
       <tr><td data-l="You see">You want the sheets saved somewhere else</td><td data-l="Do this">Double-click <b>Update Output Folder</b> on your desktop and choose the new folder. Both helpers use it from then on.</td></tr>
       <tr><td data-l="You see">A warning that pictures were stretched</td><td data-l="Do this">A sheet picture was edited or swapped. Rerun the Illustrator helper for that section and add the pages again.</td></tr>
       <tr><td data-l="You see">Printed 1-inch square isn't 1 inch</td><td data-l="Do this">Something is scaling the print. Check Part 4, especially Printer Properties.</td></tr>
+      <tr><td data-l="You see">Some fabric pictures "could not be added"</td><td data-l="Do this">The picture may be damaged or in an unusual format. Open it, save it again as JPG, and run Add Fabric Swatches again – it adds only the missing ones.</td></tr>
       <tr><td data-l="You see">A red error box in Illustrator or Word</td><td data-l="Do this">Screenshot it and send it on. Nothing in your original files is changed.</td></tr>
     </tbody>
   </table>

@@ -19,6 +19,7 @@ New-Item -ItemType Directory -Path $stage | Out-Null
 
 Copy-Item (Join-Path $root 'docs\FPP-Template-Helpers-Guide.html') (Join-Path $stage 'Start here - FPP Template Helpers Guide.html')
 Copy-Item (Join-Path $root 'src\illustrator\MakeFPPTemplates.jsx') $stage
+Copy-Item (Join-Path $root 'src\illustrator\AddFabricSwatches.jsx') $stage
 Copy-Item (Join-Path $root 'assets\1 Inch.ai') $stage
 Copy-Item (Join-Path $root 'src\updater\Update-FPPHelpers.ps1') (Join-Path $stage 'Update FPP Helpers.ps1')
 Copy-Item -LiteralPath (Join-Path $root 'src\updater\Set up updates (run once).cmd') $stage
